@@ -63,12 +63,6 @@ class PlayerTemplate:
         else:
             return False
 
-    def check_valid_worker(self, worker):
-        if worker == self._worker1 or worker == self._worker2:
-            return True
-        else:
-            return False
-
 
 class PlayerWhite(PlayerTemplate):
     def __init__(self):
