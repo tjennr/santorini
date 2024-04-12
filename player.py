@@ -12,18 +12,23 @@
 
 # Game ends when worker reaches 3rd level of building
 
+# Cells need to keep track of their own height
+
 class PlayerTemplate:
     def turn(self):
         self.move()
         self.build()
         self.worker1_pos
-        self.worker2_pos 
+        self.worker2_pos
 
-    def move(self, piece, pos):
-        
-        self.worker1_pos = pos
+    def move(self, piece, new_pos):
+        # if santorini.cell[][].get_height()
+        # Check that next position is at most 1 higher than current position
+        if new_pos <= self.worker_pos + 1:
+            self.worker_pos = new_pos
 
-    def build():
+    def build(self, pos):
+        pos.build()
 
 
 class PlayerWhite(PlayerTemplate):
