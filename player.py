@@ -21,10 +21,11 @@ class PlayerTemplate:
         self.worker1_pos = [2][2]
         self.worker2_pos
 
-    def move(self, piece, new_pos):
+    def move(self, worker, new_pos):
         # Check that next position is at most 1 higher than current position
         if new_pos.get_height() <= self.worker_pos.get_height() + 1 and new_pos in bounds:
             self.worker_pos = new_pos
+            # update in board
         else:
             print("Cannot move {pos}")
 
@@ -46,7 +47,20 @@ class PlayerWhite(PlayerTemplate):
     def build(self):
         pass
 
+    def check_valid_worker(self, worker):
+        if worker == 'A' or worker == 'B':
+            return True
+        else:
+            return False
+
+
 class PlayerBlue(PlayerTemplate):
     def __init__(self):
         self.playerY_pos = [1][1]
         self.playerZ_pos = [3][3]
+
+    def check_valid_worker(self, worker):
+        if worker == 'Y' or worker == 'Z':
+            return True
+        else:
+            return False
