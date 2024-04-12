@@ -25,7 +25,7 @@ class SantoriniCLI:
                 player = self._playerWhite
             else:
                 player = self._playerBlue
-            print(f"Turn: {self._board.get_turn_count()}, {player.color} ({player.workers})")
+            print(f"Turn: {self._turn_count()}, {player.color} ({player.workers})")
 
             # Select worker
             # TODO: print "Not your worker if current player chooses worker from other player"
@@ -48,7 +48,10 @@ class SantoriniCLI:
                 new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw): ")
             player.build(build_pos)
             
-            self._board.increment_turn_count()
+            self._increment_turn_count()
+
+    def _increment_turn_count(self):
+        self._increment_turn_count += 1
 
 
 if __name__ == "__main__":
