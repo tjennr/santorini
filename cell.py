@@ -1,17 +1,3 @@
-class Board:
-    def __init__(self, rows, cols):
-        self._turn_count = 0
-        self._rows = rows
-        self._cols = cols
-        self._cells = [[Cell(x, y) for y in range(cols)] for x in range(rows)]
-
-    def get_cells(self):
-        return self._cells
-    
-    def get_specific_cell(self, x, y):
-        return self._cells[x][y]
-
-
 class Cell:
     def __init__(self, x, y):
         self._x = x
