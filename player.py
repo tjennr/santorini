@@ -65,8 +65,8 @@ class PlayerTemplate:
 
 
 class PlayerWhite(PlayerTemplate):
-    def __init__(self):
-        super().__init__('A', 'B')
+    def __init__(self, board):
+        super().__init__('A', 'B', board)
         self.color = 'White'
         self._worker1 = Worker(1, 3)
         self._worker2 = Worker(3, 1)
@@ -74,7 +74,7 @@ class PlayerWhite(PlayerTemplate):
 
 class PlayerBlue(PlayerTemplate):
     def __init__(self, board):
-        super().__init__('Y', 'Z')
+        super().__init__('Y', 'Z', board)
         self.color = 'Blue'
         self._worker1 = Worker(1, 1)
         self._worker2 = Worker(3, 3)

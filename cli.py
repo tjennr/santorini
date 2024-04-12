@@ -6,8 +6,8 @@ class SantoriniCLI:
 
     def __init__(self):
         self._board = Board()
-        self._playerWhite = PlayerWhite()
-        self._playerBlue = PlayerBlue()
+        self._playerWhite = PlayerWhite(self._board)
+        self._playerBlue = PlayerBlue(self._board)
         self._turn_count = 0
 
     def _display_board(self):
