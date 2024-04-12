@@ -38,9 +38,9 @@ class PlayerTemplate:
         new_y = worker.y + DIRECTION[dir]['y']
         try:
             if self._board.in_bounds(new_x, new_y):
-                curr_cell_height = self._board.get_specific_cell(worker.x, worker.y).get_height()
+                curr_cell = self._board.get_specific_cell(worker.x, worker.y)
                 new_cell = self._board.get_specific_cell(new_x, new_y)
-            if new_cell.get_height() <= curr_cell_height + 1:
+            if new_cell.get_height() <= curr_cell.get_height() + 1:
                 new_cell.occupy(worker.name)
         except:
             print(f"Cannot move {dir}")
