@@ -23,8 +23,8 @@ class SantoriniCLI:
         while True:
             self._display_board()
             print(f"Turn: {self._game.get_turn_count()}, {0}{0}")
-            self._game.increment_turn_count()
             worker = input("Select a worker to move: ")
+            self._game.increment_turn_count()
 
 if __name__ == "__main__":
     SantoriniCLI().run()
