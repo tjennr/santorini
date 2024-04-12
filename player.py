@@ -15,11 +15,10 @@
 # Cells need to keep track of their own height
 
 class PlayerTemplate:
-    def turn(self):
-        self.move()
-        self.build()
-        self.worker1_pos = [2][2]
-        self.worker2_pos
+    def __init__(self, worker1, worker2):
+        self._worker1 = worker1
+        self._worker2 = worker2
+        self.workers = f'{self._worker1}{self._worker2}'
 
     def move(self, worker, new_pos):
         # Check that next position is at most 1 higher than current position
@@ -30,37 +29,33 @@ class PlayerTemplate:
             print("Cannot move {pos}")
 
     def build(self, build_pos):
-        if build_post is in bounds:
+        if build_post in bounds:
             build_pos.build()
         else:
             print("Cannot build {pos}")
 
-
-class PlayerWhite(PlayerTemplate):
-    def __init__(self):
-        self.playerA_pos = [1][3]
-        self.playerB_pos = [3][1]
-
-    def move(self, piece, pos):
-        pass
-
-    def build(self):
-        pass
-
     def check_valid_worker(self, worker):
-        if worker == 'A' or worker == 'B':
+        if worker == self._worker1 or worker == self._worker2:
             return True
         else:
             return False
+
+
+class PlayerWhite(PlayerTemplate):
+    def __init__(self):
+        super().__init__('A', 'B')
+        self.color = 'White'
+        self._worker1_x = 1
+        self._worker1_y = 3
+        self._worker2_x = 3
+        self._worker2_y = 1
 
 
 class PlayerBlue(PlayerTemplate):
     def __init__(self):
-        self.playerY_pos = [1][1]
-        self.playerZ_pos = [3][3]
-
-    def check_valid_worker(self, worker):
-        if worker == 'Y' or worker == 'Z':
-            return True
-        else:
-            return False
+        super().__init__('Y', 'Z')
+        self.color = 'Blue'
+        self._worker1_x = 1
+        self._worker1_y = 1
+        self._worker2_x = 3
+        self._worker2_y = 3
