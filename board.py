@@ -9,9 +9,3 @@ class Board:
     
     def get_specific_cell(self, x, y):
         return self._cells[x][y]
-    
-    def in_bounds(self, x, y):
-        if x <= 4 and y <= 4:
-            return True
-        else:
-            return False
