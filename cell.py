@@ -4,6 +4,7 @@ class Cell:
         self._y = y
         self._height = 0
         self._occupied = False
+        self._occupied_by = None
 
     def build(self):
         self._height += 1
@@ -17,5 +18,13 @@ class Cell:
     def is_occupied(self):
         return self._occupied
     
-    def in_bounds(self, x, y):
-        pass
+    def occupy(self, worker):
+        self._occupied = True
+        self._occupied_by = worker
+
+    def get_occupying_worker(self):
+        return self._occupied_by
+
+    def remove_worker(self):
+        self._occupied = False
+        self._occupied_by = None

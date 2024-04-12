@@ -8,31 +8,26 @@ class SantoriniCLI:
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board)
         self._playerBlue = PlayerBlue(self._board)
-        self._turn_count = 0
+        self._turn_count = 1
 
     def _display_board(self):
         board = self._board.get_cells()
-        for y, row in enumerate(board):
+        for row in board:
             print("+--+--+--+--+--+")
-            for x, cell in enumerate(row):
-                if (x, y) == (self._playerWhite._worker1_x, self._playerWhite._worker1_y):
-                    print(f"|{cell.get_height()}A", end="")
-                elif (x, y) == (self._playerWhite._worker2_x, self._playerWhite._worker2_y):
-                    print(f"|{cell.get_height()}B", end="")
-                elif (x, y) == (self._playerBlue._worker1_x, self._playerBlue._worker1_y):
-                    print(f"|{cell.get_height()}Y", end="")
-                elif (x, y) == (self._playerBlue._worker2_x, self._playerBlue._worker2_y):
-                    print(f"|{cell.get_height()}Z", end="")
+            row_string = ""
+            for cell in row:
+                if cell.is_occupied():
+                    row_string += f"|{cell.get_height()}{cell.get_occupying_worker()}"
                 else:
-                    print(f"|{cell.get_height()} ", end="")
-            print("|")
+                    row_string += f"|{cell.get_height()} "
+            print(row_string + "|")
         print("+--+--+--+--+--+")
 
     def run(self):
         while True:
             self._display_board()
 
-            if self._turn_count % 2 == 0:
+            if self._turn_count % 2 == 1:
                 player = self._playerWhite
             else:
                 player = self._playerBlue

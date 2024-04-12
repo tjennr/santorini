@@ -9,3 +9,7 @@ class Board:
     
     def get_specific_cell(self, x, y):
         return self._cells[x][y]
+    
+    def set_worker_at_cell(self, worker_name, x, y):
+        cell = self.get_specific_cell(x, y)
+        cell.occupy(worker_name)

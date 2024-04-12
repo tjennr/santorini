@@ -26,22 +26,21 @@ DIRECTION = {
 }
 
 class PlayerTemplate:
-    def __init__(self, worker1, worker2, board):
-        self._worker1 = worker1
-        self._worker2 = worker2
-        self.workers = f'{self._worker1}{self._worker2}'
+    def __init__(self, board):
+        self.workers = f'{self._worker1.name}{self._worker2.name}'
         self._board = board
+        self._board.set_worker_at_cell(self._worker1.name, self._worker1.x, self._worker1.y)
+        self._board.set_worker_at_cell(self._worker2.name, self._worker2.x, self._worker2.y)
 
-    def move(self, worker, dir):
-        # Check that next position is at most 1 higher than current position
-        # need to access cells somehow?
+    def move(self, worker_name, dir):
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
+        worker = self.select_worker(worker_name)
         try:
             if self._board.in_bounds(new_x, new_y):
                 new_cell = self._board.get_specific_cell(new_x, new_y)
             if new_cell.get_height() <= self.worker_pos.get_height() + 1:
-                self.worker_pos = new_cell
+                new_cell.occupy(worker.name)
         except:
             print("Cannot move {pos}")
 
@@ -54,30 +53,38 @@ class PlayerTemplate:
         except IndexError:
             print("Cannot build {pos}")
 
+    def select_worker(self, name):
+        if self._worker1.name == name:
+            return self._worker1
+        elif self._worker1.name == name:
+            return self._worker2
+
     def check_valid_worker(self, worker):
-        if worker == self._worker1 or worker == self._worker2:
+        if worker == self._worker1.name or worker == self._worker2.name:
             return True
         else:
+            print(worker)
             return False
 
 
 class PlayerWhite(PlayerTemplate):
     def __init__(self, board):
-        super().__init__('A', 'B', board)
         self.color = 'White'
-        self._worker1 = Worker(1, 3)
-        self._worker2 = Worker(3, 1)
+        self._worker1 = Worker('A', 3, 1)
+        self._worker2 = Worker('B', 1, 3)
+        super().__init__(board)
 
 
 class PlayerBlue(PlayerTemplate):
     def __init__(self, board):
-        super().__init__('Y', 'Z', board)
         self.color = 'Blue'
-        self._worker1 = Worker(1, 1)
-        self._worker2 = Worker(3, 3)
+        self._worker1 = Worker('Y', 1, 1)
+        self._worker2 = Worker('Z', 3, 3)
+        super().__init__(board)
     
 
 class Worker:
-    def __init__(self, x, y):
+    def __init__(self, name, x, y):
+        self.name = name
         self.x = x
         self.y = y
