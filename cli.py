@@ -8,7 +8,7 @@ class SantoriniCLI:
         self._board = Board()
         self._playerWhite = PlayerWhite()
         self._playerBlue = PlayerBlue()
-        self._turn_count = 1
+        self._turn_count = 0
 
     def _display_board(self):
         board = self._board.get_cells()
@@ -21,11 +21,11 @@ class SantoriniCLI:
         while True:
             self._display_board()
 
-            if self._board.get_turn_count() % 2 == 0:
+            if self._turn_count % 2 == 0:
                 player = self._playerWhite
             else:
                 player = self._playerBlue
-            print(f"Turn: {self._turn_count()}, {player.color} ({player.workers})")
+            print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
 
             # Select worker
             # TODO: print "Not your worker if current player chooses worker from other player"

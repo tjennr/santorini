@@ -13,20 +13,20 @@
 # Game ends when worker reaches 3rd level of building
 
 # Cells need to keep track of their own height
-ROTOR_WIRINGS = {
-    'I': {'forward':'EKMFLGDQVZNTOWYHXUSPAIBRCJ',
-          'backward':'UWYGADFPVZBECKMTHXSLRINQOJ'},
-    'II':{'forward':'AJDKSIRUXBLHWTMCQGZNPYFVOE',
-          'backward':'AJPCZWRLFBDKOTYUQGENHXMIVS'},
-    'III':{'forward':'BDFHJLCPRTXVZNYEIWGAKMUSQO',
-           'backward':'TAGBPCSDQEUFVNZHYIXJWLRKOM'},
-    'V':{'forward':'VZBRGITYUPSDNHLXAWMJQOFECK',
-           'backward':'QCYLXWENFTZOSMVJUDKGIARPHB'}
-}
+# ROTOR_WIRINGS = {
+#     'I': {'forward':'EKMFLGDQVZNTOWYHXUSPAIBRCJ',
+#           'backward':'UWYGADFPVZBECKMTHXSLRINQOJ'},
+#     'II':{'forward':'AJDKSIRUXBLHWTMCQGZNPYFVOE',
+#           'backward':'AJPCZWRLFBDKOTYUQGENHXMIVS'},
+#     'III':{'forward':'BDFHJLCPRTXVZNYEIWGAKMUSQO',
+#            'backward':'TAGBPCSDQEUFVNZHYIXJWLRKOM'},
+#     'V':{'forward':'VZBRGITYUPSDNHLXAWMJQOFECK',
+#            'backward':'QCYLXWENFTZOSMVJUDKGIARPHB'}
+# }
 
-DIRECTION = {
-    'n': {'x': 0, ''}
-}
+# DIRECTION = {
+#     'n': {'x': 0, ''}
+# }
 
 class PlayerTemplate:
     def __init__(self, worker1, worker2):
