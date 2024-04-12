@@ -34,7 +34,8 @@ class SantoriniCLI:
             print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
 
             # Select worker
-            worker = input("Select a worker to move\n").upper()
+            # ? is 'a' a valid input for worker 'A' ?
+            worker = input("Select a worker to move\n")
             while not player.check_valid_worker(worker):
                 if player == self._playerWhite and worker.upper() == 'Y' or worker.upper() == 'Z':
                     print("That is not your worker")
@@ -52,16 +53,16 @@ class SantoriniCLI:
             player.move(worker, new_pos)
 
             # Select build direction
-            build_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-            while new_pos not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
-                print("Not a valid direction")
-                new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-            player.build(build_pos)
+            # build_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
+            # while new_pos not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
+            #     print("Not a valid direction")
+            #     new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
+            # player.build(build_pos)
             
             self._increment_turn_count()
 
     def _increment_turn_count(self):
-        self._increment_turn_count += 1
+        self._turn_count += 1
 
 
 if __name__ == "__main__":
