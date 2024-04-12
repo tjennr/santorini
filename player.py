@@ -57,6 +57,8 @@ class PlayerTemplate:
             new_cell = self._board.get_specific_cell(new_x, new_y)
             if not new_cell.is_occupied():
                 new_cell.build()
+            else:
+                raise Exception
         else:
             raise Exception
 
