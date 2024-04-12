@@ -1,3 +1,6 @@
+from santorini import Santorini
+from player import Player
+
 class SantoriniCLI:
     def __init__(self):
         self._turn_count = 0
