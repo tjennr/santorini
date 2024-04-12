@@ -9,3 +9,5 @@ class Board:
     
     def get_specific_cell(self, x, y):
         return self._cells[x][y]
+    
+    def in_bound
