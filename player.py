@@ -16,16 +16,6 @@
 
 # ? x and y are inverted for soem reason but this is the only way i got it to move the right dir
 DIRECTION = {
-<<<<<<< HEAD
-    'n': {'x': -1, 'y': 0},
-    'ne': {'x': -1, 'y': 1},
-    'e': {'x': 0, 'y': 1},
-    'se': {'x': 1, 'y': 1},
-    's': {'x': 1, 'y': 0},
-    'sw': {'x': 1, 'y': -1},
-    'w': {'x': 1, 'y': 0},
-    'nw': {'x': -1, 'y': -1},
-=======
     'n': {'y': 0, 'x': -1},
     'ne': {'y': 1, 'x': -1},
     'e': {'y': 1, 'x': 0},
@@ -34,7 +24,6 @@ DIRECTION = {
     'sw': {'y': -1, 'x': 1},
     'w': {'y': -1, 'x': 0},
     'nw': {'y': 0, 'x': -1},
->>>>>>> 10f89cc (cli and board display)
 }
 
 class PlayerTemplate:
@@ -46,22 +35,6 @@ class PlayerTemplate:
 
     def move(self, worker_name, dir):
         worker = self.select_worker(worker_name)
-<<<<<<< HEAD
-        new_x = worker.x + DIRECTION[dir]['x']
-        new_y = worker.y + DIRECTION[dir]['y']
-        try:
-            if self._board.in_bounds(new_x, new_y):
-                curr_cell = self._board.get_specific_cell(worker.x, worker.y)
-                new_cell = self._board.get_specific_cell(new_x, new_y)
-            if new_cell.get_height() <= curr_cell.get_height() + 1:
-                new_cell.occupy(worker.name)
-                curr_cell.remove_worker()
-        except:
-            print(f"Cannot move {dir}")
-
-    def build(self, worker, dir):
-=======
->>>>>>> 10f89cc (cli and board display)
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
         new_cell = self._board.get_specific_cell(new_x, new_y)
@@ -113,10 +86,7 @@ class Worker:
         self.name = name
         self.x = x
         self.y = y
-<<<<<<< HEAD
-=======
 
     def update_pos(self, x, y):
         self.x = x
         self.y = y
->>>>>>> 10f89cc (cli and board display)

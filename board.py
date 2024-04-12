@@ -13,6 +13,3 @@ class Board:
     def set_worker_at_cell(self, worker_name, x, y):
         cell = self.get_specific_cell(x, y)
         cell.occupy(worker_name)
-    
-    def in_bounds(self, x, y):
-        return 5 >= x >= 0 and 5 >= y >= 0
