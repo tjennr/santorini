@@ -63,7 +63,6 @@ class PlayerTemplate:
         if worker == self._worker1.name or worker == self._worker2.name:
             return True
         else:
-            print(worker)
             return False
 
 

@@ -34,10 +34,14 @@ class SantoriniCLI:
             print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
 
             # Select worker
-            # TODO: print "Not your worker if current player chooses worker from other player"
-            worker = input("Select a worker to move\n")
+            worker = input("Select a worker to move\n").upper()
             while not player.check_valid_worker(worker):
-                print("Not a valid worker")
+                if player == self._playerWhite and worker.upper() == 'Y' or worker.upper() == 'Z':
+                    print("That is not your worker")
+                elif player == self._playerBlue and worker.upper() == 'A' or worker.upper() == 'B':
+                    print("That is not your worker")
+                else:
+                    print("Not a valid worker")
                 worker = input("Select a worker to move\n")
             
             # Select move direction
