@@ -33,15 +33,13 @@ class PlayerTemplate:
         self._board = board
 
     def move(self, worker, dir):
-        # Check that next position is at most 1 higher than current position
-        # need to access cells somehow?
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
         try:
             if self._board.in_bounds(new_x, new_y):
                 new_cell = self._board.get_specific_cell(new_x, new_y)
             if new_cell.get_height() <= self.worker_pos.get_height() + 1:
-                self.worker_pos = new_cell
+                new_cell.occupy(worker)
         except:
             print("Cannot move {pos}")
 
