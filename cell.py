@@ -22,6 +22,9 @@ class Cell:
         self._occupied = True
         self._occupied_by = worker
 
+    def get_occupying_worker(self):
+        return self._occupied_by
+
     def remove_worker(self):
         self._occupied = False
         self._occupied_by = None

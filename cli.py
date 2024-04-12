@@ -8,20 +8,26 @@ class SantoriniCLI:
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board)
         self._playerBlue = PlayerBlue(self._board)
-        self._turn_count = 0
+        self._turn_count = 1
 
     def _display_board(self):
         board = self._board.get_cells()
         for row in board:
             print("+--+--+--+--+--+")
-            print("|" + "|".join(f"{cell.get_height()} " for cell in row) + "|")
+            row_string = ""
+            for cell in row:
+                if cell.is_occupied():
+                    row_string += f"|{cell.get_height()}{cell.get_occupying_worker()}"
+                else:
+                    row_string += f"|{cell.get_height()} "
+            print(row_string + "|")
         print("+--+--+--+--+--+")
 
     def run(self):
         while True:
             self._display_board()
 
-            if self._turn_count % 2 == 0:
+            if self._turn_count % 2 == 1:
                 player = self._playerWhite
             else:
                 player = self._playerBlue
