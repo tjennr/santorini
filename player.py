@@ -37,24 +37,21 @@ class PlayerTemplate:
         # need to access cells somehow?
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
-
-        if self._board.in_bounds(new_x, new_y):
-            new_cell = self._board.get_specific_cell(new_x, new_y)
-
-        if new_cell.get_height() <= self.worker_pos.get_height() + 1:
-            self.worker_pos = new_cell
-            # update in board
-        else:
+        try:
+            if self._board.in_bounds(new_x, new_y):
+                new_cell = self._board.get_specific_cell(new_x, new_y)
+            if new_cell.get_height() <= self.worker_pos.get_height() + 1:
+                self.worker_pos = new_cell
+        except:
             print("Cannot move {pos}")
 
     def build(self, worker, dir):
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
-
-        if self._board.in_bounds(new_x, new_y):
+        try:
             new_cell = self._board.get_specific_cell(new_x, new_y)
             self._board.build()
-        else:
+        except IndexError:
             print("Cannot build {pos}")
 
     def check_valid_worker(self, worker):
