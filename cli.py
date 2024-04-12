@@ -29,10 +29,10 @@ class SantoriniCLI:
 
             # Select worker
             # TODO: print "Not your worker if current player chooses worker from other player"
-            worker = input("Select a worker to move:\n")
+            worker = input("Select a worker to move\n")
             while not player.check_valid_worker(worker):
                 print("Not a valid worker")
-                worker = input("Select a worker to move:\n")
+                worker = input("Select a worker to move\n")
 
             # Select move direction
             new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
@@ -42,10 +42,10 @@ class SantoriniCLI:
             player.move(worker, new_pos)
 
             # Select build direction
-            build_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)")
+            build_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
             while new_pos not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
                 print("Not a valid direction")
-                new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw): ")
+                new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
             player.build(build_pos)
             
             self._increment_turn_count()
