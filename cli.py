@@ -34,7 +34,7 @@ class SantoriniCLI:
 
             # TODO: current player needs to change each round
             player = self._playerBlue
-            print(f"Turn: {self._get_turn_count()}, {0}{0}")
+            print(f"Turn: {self._get_turn_count()}, {player.color}{player.workers}")
 
             # Select worker
             worker = input("Select a worker to move: ")
