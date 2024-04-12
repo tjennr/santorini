@@ -19,11 +19,25 @@ class SantoriniCLI:
 # +--+--+--+--+--+
 # """)
     def _display_board(self):
-        board = self._game.get_cells()
-        for row in board:
+        if self._game.get_turn_count() == 0:
+            print(f"""+--+--+--+--+--+
+|0 |0 |0 |0 |0 |
++--+--+--+--+--+
+|0 |0Y|0 |0B|0 |
++--+--+--+--+--+
+|0 |0 |0 |0 |0 |
++--+--+--+--+--+
+|0 |0A|0 |0Z|0 |
++--+--+--+--+--+
+|0 |0 |0 |0 |0 |
++--+--+--+--+--+
+""")
+        else:
+            board = self._game.get_cells()
+            for row in board:
+                print("+--+--+--+--+--+")
+                print("|" + "|".join(f"{cell} " for cell in row) + "|")
             print("+--+--+--+--+--+")
-            print("|" + "|".join(f"{cell} " for cell in row) + "|")
-        print("+--+--+--+--+--+")
 
     def run(self):
         while True:
