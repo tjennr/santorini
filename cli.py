@@ -3,7 +3,7 @@ from player import Player
 
 class SantoriniCLI:
     def __init__(self):
-        self._turn_count = 0
+        self._game = Santorini()
 
     def _display_board(self):
         print(f"""+--+--+--+--+--+
@@ -17,10 +17,14 @@ class SantoriniCLI:
 +--+--+--+--+--+
 |0 |0 |0 |0 |0 |
 +--+--+--+--+--+
-Turn: {self._turn_count}, {0}{0}""")
+""")
 
     def run(self):
-        self._display_board()
+        while True:
+            self._display_board()
+            print(f"Turn: {self._game.get_turn_count()}, {0}{0}")
+            self._game.increment_turn_count()
+            worker = input("Select a worker to move: ")
 
 if __name__ == "__main__":
     SantoriniCLI().run()
