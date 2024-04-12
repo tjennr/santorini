@@ -1,3 +1,2 @@
-hello
-wow
-w
+def main():
+    pass
