@@ -33,16 +33,16 @@ class PlayerTemplate:
         self._board.set_worker_at_cell(self._worker2.name, self._worker2.x, self._worker2.y)
 
     def move(self, worker_name, dir):
+        worker = self.select_worker(worker_name)
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
-        worker = self.select_worker(worker_name)
         try:
             if self._board.in_bounds(new_x, new_y):
                 new_cell = self._board.get_specific_cell(new_x, new_y)
             if new_cell.get_height() <= self.worker_pos.get_height() + 1:
                 new_cell.occupy(worker.name)
         except:
-            print("Cannot move {pos}")
+            print(f"Cannot move {dir}")
 
     def build(self, worker, dir):
         new_x = worker.x + DIRECTION[dir]['x']

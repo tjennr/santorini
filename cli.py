@@ -39,7 +39,7 @@ class SantoriniCLI:
             while not player.check_valid_worker(worker):
                 print("Not a valid worker")
                 worker = input("Select a worker to move\n")
-
+            
             # Select move direction
             new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
             while new_pos not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
