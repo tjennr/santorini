@@ -1,6 +1,7 @@
 class SantoriniCLI:
     def __init__(self):
-        pass
+        self._turn_count = 0
+
     def _display_board(self):
         print(f"""+--+--+--+--+--+
 |0 |0 |0 |0 |0 |
@@ -12,7 +13,8 @@ class SantoriniCLI:
 |0 |0A|0 |0Z|0 |
 +--+--+--+--+--+
 |0 |0 |0 |0 |0 |
-+--+--+--+--+--+""")
++--+--+--+--+--+
+Turn: {self._turn_count}, {0}{0}""")
 
     def run(self):
         self._display_board()
