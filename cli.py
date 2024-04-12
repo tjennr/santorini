@@ -1,32 +1,21 @@
-from santorini import Board
+from board import Board
 from player import PlayerWhite, PlayerBlue
 
 class SantoriniCLI:
+    '''Controls the user command line interface'''
+
     def __init__(self):
-        self._board = Board(5, 5)
+        self._board = Board()
         self._playerWhite = PlayerWhite()
         self._playerBlue = PlayerBlue()
+        self._turn_count = 1
 
     def _display_board(self):
-        if self._board.get_turn_count() == 0:
-            print(f"""+--+--+--+--+--+
-|0 |0 |0 |0 |0 |
-+--+--+--+--+--+
-|0 |0Y|0 |0B|0 |
-+--+--+--+--+--+
-|0 |0 |0 |0 |0 |
-+--+--+--+--+--+
-|0 |0A|0 |0Z|0 |
-+--+--+--+--+--+
-|0 |0 |0 |0 |0 |
-+--+--+--+--+--+
-""")
-        else:
-            board = self._board.get_cells()
-            for row in board:
-                print("+--+--+--+--+--+")
-                print("|" + "|".join(f"{cell} " for cell in row) + "|")
+        board = self._board.get_cells()
+        for row in board:
             print("+--+--+--+--+--+")
+            print("|" + "|".join(f"{cell.get_height()} " for cell in row) + "|")
+        print("+--+--+--+--+--+")
 
     def run(self):
         while True:
