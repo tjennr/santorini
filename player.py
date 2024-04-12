@@ -14,15 +14,16 @@
 
 # Cells need to keep track of their own height
 
+# ? x and y are inverted for soem reason but this is the only way i got it to move the right dir
 DIRECTION = {
-    'n': {'x': 0, 'y': -1},
-    'ne': {'x': 1, 'y': -1},
-    'e': {'x': 1, 'y': 0},
+    'n': {'x': -1, 'y': 0},
+    'ne': {'x': -1, 'y': 1},
+    'e': {'x': 0, 'y': 1},
     'se': {'x': 1, 'y': 1},
-    's': {'x': 0, 'y': 1},
-    'sw': {'x': -1, 'y': 1},
-    'w': {'x': -1, 'y': 0},
-    'nw': {'x': 0, 'y': -1},
+    's': {'x': 1, 'y': 0},
+    'sw': {'x': 1, 'y': -1},
+    'w': {'x': 1, 'y': 0},
+    'nw': {'x': -1, 'y': -1},
 }
 
 class PlayerTemplate:
@@ -42,6 +43,7 @@ class PlayerTemplate:
                 new_cell = self._board.get_specific_cell(new_x, new_y)
             if new_cell.get_height() <= curr_cell.get_height() + 1:
                 new_cell.occupy(worker.name)
+                curr_cell.remove_worker()
         except:
             print(f"Cannot move {dir}")
 
