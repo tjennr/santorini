@@ -34,6 +34,7 @@ class PlayerTemplate:
         self._worker2 = worker2
         self.workers = f'{self._worker1}{self._worker2}'
 
+<<<<<<< HEAD
     # def move(self, worker, new_pos):
     #     # Check that next position is at most 1 higher than current position
     #     if new_pos.get_height() <= self.worker_pos.get_height() + 1 and new_pos in bounds:
@@ -47,6 +48,25 @@ class PlayerTemplate:
     #         build_pos.build()
     #     else:
     #         print("Cannot build {pos}")
+
+    def check_valid_worker(self, worker):
+        if worker == self._worker1 or worker == self._worker2:
+            return True
+=======
+    def move(self, worker, new_pos):
+        # Check that next position is at most 1 higher than current position
+        if new_pos.get_height() <= self.worker_pos.get_height() + 1 and new_pos in bounds:
+            self.worker_pos = new_pos
+            # update in board
+        else:
+            print("Cannot move {pos}")
+
+    def build(self, build_pos):
+        if build_post in bounds:
+            build_pos.build()
+>>>>>>> main
+        else:
+            return False
 
     def check_valid_worker(self, worker):
         if worker == self._worker1 or worker == self._worker2:
