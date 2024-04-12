@@ -12,9 +12,20 @@ class SantoriniCLI:
 
     def _display_board(self):
         board = self._board.get_cells()
-        for row in board:
+        for y, row in enumerate(board):
             print("+--+--+--+--+--+")
-            print("|" + "|".join(f"{cell.get_height()} " for cell in row) + "|")
+            for x, cell in enumerate(row):
+                if (x, y) == (self._playerWhite._worker1_x, self._playerWhite._worker1_y):
+                    print(f"|{cell.get_height()}A", end="")
+                elif (x, y) == (self._playerWhite._worker2_x, self._playerWhite._worker2_y):
+                    print(f"|{cell.get_height()}B", end="")
+                elif (x, y) == (self._playerBlue._worker1_x, self._playerBlue._worker1_y):
+                    print(f"|{cell.get_height()}Y", end="")
+                elif (x, y) == (self._playerBlue._worker2_x, self._playerBlue._worker2_y):
+                    print(f"|{cell.get_height()}Z", end="")
+                else:
+                    print(f"|{cell.get_height()} ", end="")
+            print("|")
         print("+--+--+--+--+--+")
 
     def run(self):
