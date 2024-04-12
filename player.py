@@ -26,23 +26,34 @@ DIRECTION = {
 }
 
 class PlayerTemplate:
-    def __init__(self, worker1, worker2):
+    def __init__(self, worker1, worker2, board):
         self._worker1 = worker1
         self._worker2 = worker2
         self.workers = f'{self._worker1}{self._worker2}'
+        self._board = board
 
-    def move(self, worker, direction):
+    def move(self, worker, dir):
         # Check that next position is at most 1 higher than current position
         # need to access cells somehow?
-        if new_pos.get_height() <= self.worker_pos.get_height() + 1 and new_pos in bounds:
-            self.worker_pos = new_pos
+        new_x = worker.x + DIRECTION[dir]['x']
+        new_y = worker.y + DIRECTION[dir]['y']
+
+        if self._board.in_bounds(new_x, new_y):
+            new_cell = self._board.get_specific_cell(new_x, new_y)
+
+        if new_cell.get_height() <= self.worker_pos.get_height() + 1:
+            self.worker_pos = new_cell
             # update in board
         else:
             print("Cannot move {pos}")
 
-    def build(self, direction):
-        if build_post is in bounds:
-            build_pos.build()
+    def build(self, worker, dir):
+        new_x = worker.x + DIRECTION[dir]['x']
+        new_y = worker.y + DIRECTION[dir]['y']
+
+        if self._board.in_bounds(new_x, new_y):
+            new_cell = self._board.get_specific_cell(new_x, new_y)
+            self._board.build()
         else:
             print("Cannot build {pos}")
 
@@ -68,7 +79,7 @@ class PlayerWhite(PlayerTemplate):
 
 
 class PlayerBlue(PlayerTemplate):
-    def __init__(self):
+    def __init__(self, board):
         super().__init__('Y', 'Z')
         self.color = 'Blue'
         self._worker1 = Worker(1, 1)
