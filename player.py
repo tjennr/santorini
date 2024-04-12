@@ -13,46 +13,49 @@
 # Game ends when worker reaches 3rd level of building
 
 # Cells need to keep track of their own height
-# ROTOR_WIRINGS = {
-#     'I': {'forward':'EKMFLGDQVZNTOWYHXUSPAIBRCJ',
-#           'backward':'UWYGADFPVZBECKMTHXSLRINQOJ'},
-#     'II':{'forward':'AJDKSIRUXBLHWTMCQGZNPYFVOE',
-#           'backward':'AJPCZWRLFBDKOTYUQGENHXMIVS'},
-#     'III':{'forward':'BDFHJLCPRTXVZNYEIWGAKMUSQO',
-#            'backward':'TAGBPCSDQEUFVNZHYIXJWLRKOM'},
-#     'V':{'forward':'VZBRGITYUPSDNHLXAWMJQOFECK',
-#            'backward':'QCYLXWENFTZOSMVJUDKGIARPHB'}
-# }
 
-# DIRECTION = {
-#     'n': {'x': 0, ''}
-# }
+DIRECTION = {
+    'n': {'x': 0, 'y': -1},
+    'ne': {'x': 1, 'y': -1},
+    'e': {'x': 1, 'y': 0},
+    'se': {'x': 1, 'y': 1},
+    's': {'x': 0, 'y': 1},
+    'sw': {'x': -1, 'y': 1},
+    'w': {'x': -1, 'y': 0},
+    'nw': {'x': 0, 'y': -1},
+}
 
 class PlayerTemplate:
-    def __init__(self, worker1, worker2):
+    def __init__(self, worker1, worker2, board):
         self._worker1 = worker1
         self._worker2 = worker2
         self.workers = f'{self._worker1}{self._worker2}'
+        self._board = board
 
-    # def move(self, worker, new_pos):
-    #     # Check that next position is at most 1 higher than current position
-    #     if new_pos.get_height() <= self.worker_pos.get_height() + 1 and new_pos in bounds:
-    #         self.worker_pos = new_pos
-    #         # update in board
-    #     else:
-    #         print("Cannot move {pos}")
+    def move(self, worker, dir):
+        # Check that next position is at most 1 higher than current position
+        # need to access cells somehow?
+        new_x = worker.x + DIRECTION[dir]['x']
+        new_y = worker.y + DIRECTION[dir]['y']
 
-    # def build(self, build_pos):
-    #     if build_post is in bounds:
-    #         build_pos.build()
-    #     else:
-    #         print("Cannot build {pos}")
+        if self._board.in_bounds(new_x, new_y):
+            new_cell = self._board.get_specific_cell(new_x, new_y)
 
-    def check_valid_worker(self, worker):
-        if worker == self._worker1 or worker == self._worker2:
-            return True
+        if new_cell.get_height() <= self.worker_pos.get_height() + 1:
+            self.worker_pos = new_cell
+            # update in board
         else:
-            return False
+            print("Cannot move {pos}")
+
+    def build(self, worker, dir):
+        new_x = worker.x + DIRECTION[dir]['x']
+        new_y = worker.y + DIRECTION[dir]['y']
+
+        if self._board.in_bounds(new_x, new_y):
+            new_cell = self._board.get_specific_cell(new_x, new_y)
+            self._board.build()
+        else:
+            print("Cannot build {pos}")
 
     def check_valid_worker(self, worker):
         if worker == self._worker1 or worker == self._worker2:
@@ -62,20 +65,22 @@ class PlayerTemplate:
 
 
 class PlayerWhite(PlayerTemplate):
-    def __init__(self):
-        super().__init__('A', 'B')
+    def __init__(self, board):
+        super().__init__('A', 'B', board)
         self.color = 'White'
-        self._worker1_x = 1
-        self._worker1_y = 3
-        self._worker2_x = 3
-        self._worker2_y = 1
+        self._worker1 = Worker(1, 3)
+        self._worker2 = Worker(3, 1)
 
 
 class PlayerBlue(PlayerTemplate):
-    def __init__(self):
-        super().__init__('Y', 'Z')
+    def __init__(self, board):
+        super().__init__('Y', 'Z', board)
         self.color = 'Blue'
-        self._worker1_x = 1
-        self._worker1_y = 1
-        self._worker2_x = 3
-        self._worker2_y = 3
+        self._worker1 = Worker(1, 1)
+        self._worker2 = Worker(3, 3)
+    
+
+class Worker:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
