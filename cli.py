@@ -46,18 +46,28 @@ class SantoriniCLI:
                 worker = input("Select a worker to move\n")
             
             # Select move direction
-            new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-            while new_pos not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
-                print("Not a valid direction")
-                new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-            player.move(worker, new_pos)
+            while True:
+                try:
+                    dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
+                    if dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
+                        print("Not a valid direction")
+                        continue
+                    player.move(worker, dir)
+                    break
+                except:
+                    print(f"Cannot move {dir}")
 
             # Select build direction
-            # build_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-            # while new_pos not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
-            #     print("Not a valid direction")
-            #     new_pos = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-            # player.build(build_pos)
+            while True:
+                try:
+                    dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
+                    if dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
+                        print("Not a valid direction")
+                        continue
+                    player.build(worker, dir)
+                    break
+                except:
+                    print(f"Cannot build {dir}")
             
             self._increment_turn_count()
 

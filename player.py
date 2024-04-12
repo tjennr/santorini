@@ -16,6 +16,7 @@
 
 # ? x and y are inverted for soem reason but this is the only way i got it to move the right dir
 DIRECTION = {
+<<<<<<< HEAD
     'n': {'x': -1, 'y': 0},
     'ne': {'x': -1, 'y': 1},
     'e': {'x': 0, 'y': 1},
@@ -24,6 +25,16 @@ DIRECTION = {
     'sw': {'x': 1, 'y': -1},
     'w': {'x': 1, 'y': 0},
     'nw': {'x': -1, 'y': -1},
+=======
+    'n': {'y': 0, 'x': -1},
+    'ne': {'y': 1, 'x': -1},
+    'e': {'y': 1, 'x': 0},
+    'se': {'y': 1, 'x': 1},
+    's': {'y': 0, 'x': 1},
+    'sw': {'y': -1, 'x': 1},
+    'w': {'y': -1, 'x': 0},
+    'nw': {'y': 0, 'x': -1},
+>>>>>>> 10f89cc (cli and board display)
 }
 
 class PlayerTemplate:
@@ -35,6 +46,7 @@ class PlayerTemplate:
 
     def move(self, worker_name, dir):
         worker = self.select_worker(worker_name)
+<<<<<<< HEAD
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
         try:
@@ -48,18 +60,29 @@ class PlayerTemplate:
             print(f"Cannot move {dir}")
 
     def build(self, worker, dir):
+=======
+>>>>>>> 10f89cc (cli and board display)
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
-        try:
-            new_cell = self._board.get_specific_cell(new_x, new_y)
-            self._board.build()
-        except IndexError:
-            print("Cannot build {pos}")
+        new_cell = self._board.get_specific_cell(new_x, new_y)
+        curr_cell = self._board.get_specific_cell(worker.x, worker.y)
+        if not new_cell.is_occupied() and new_cell.get_height() <= curr_cell.get_height() + 1:
+            curr_cell.remove()
+            new_cell.occupy(worker.name)
+            worker.update_pos(new_x, new_y)
+
+    def build(self, worker_name, dir):
+        worker = self.select_worker(worker_name)
+        new_x = worker.x + DIRECTION[dir]['x']
+        new_y = worker.y + DIRECTION[dir]['y']
+        new_cell = self._board.get_specific_cell(new_x, new_y)
+        if not new_cell.is_occupied():
+            new_cell.build()
 
     def select_worker(self, name):
         if self._worker1.name == name:
             return self._worker1
-        elif self._worker1.name == name:
+        elif self._worker2.name == name:
             return self._worker2
 
     def check_valid_worker(self, worker):
@@ -90,3 +113,10 @@ class Worker:
         self.name = name
         self.x = x
         self.y = y
+<<<<<<< HEAD
+=======
+
+    def update_pos(self, x, y):
+        self.x = x
+        self.y = y
+>>>>>>> 10f89cc (cli and board display)
