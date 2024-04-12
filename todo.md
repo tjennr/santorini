@@ -3,5 +3,7 @@
 - [x] Current player needs to change in each round of the game
 - [x] Display the position of each worker on the board
 - [x] After each turn, we must update the board + cells with every worker's postioning and building heights
-- [] Fix build incorrect locations
+- [x] Fix build out of bounds
+- [] Fix build onto alr occupied square
+- [x] Fix move out of bounds
 - [] Check for game end (integrate observer.py)

@@ -37,20 +37,28 @@ class PlayerTemplate:
         worker = self.select_worker(worker_name)
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
-        new_cell = self._board.get_specific_cell(new_x, new_y)
-        curr_cell = self._board.get_specific_cell(worker.x, worker.y)
-        if not new_cell.is_occupied() and new_cell.get_height() <= curr_cell.get_height() + 1:
-            curr_cell.remove()
-            new_cell.occupy(worker.name)
-            worker.update_pos(new_x, new_y)
+        if self._board.in_bounds(new_x, new_y):
+            new_cell = self._board.get_specific_cell(new_x, new_y)
+            curr_cell = self._board.get_specific_cell(worker.x, worker.y)
+            if not new_cell.is_occupied() and new_cell.get_height() <= curr_cell.get_height() + 1:
+                curr_cell.remove()
+                new_cell.occupy(worker.name)
+                worker.update_pos(new_x, new_y)
+            else:
+                raise Exception
+        else:
+            raise Exception
 
     def build(self, worker_name, dir):
         worker = self.select_worker(worker_name)
         new_x = worker.x + DIRECTION[dir]['x']
         new_y = worker.y + DIRECTION[dir]['y']
-        new_cell = self._board.get_specific_cell(new_x, new_y)
-        if not new_cell.is_occupied():
-            new_cell.build()
+        if self._board.in_bounds(new_x, new_y):
+            new_cell = self._board.get_specific_cell(new_x, new_y)
+            if not new_cell.is_occupied():
+                new_cell.build()
+        else:
+            raise Exception
 
     def select_worker(self, name):
         if self._worker1.name == name:
