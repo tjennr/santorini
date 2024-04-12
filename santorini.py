@@ -5,7 +5,6 @@ class Santorini:
         for _ in range(5):
             row = [0] * 5
             self._cells.append(row)
-        # ? keeping track of each level of each square
 
     def get_cells(self):
         return self._cells
