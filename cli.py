@@ -48,26 +48,28 @@ class SantoriniCLI:
             # Select move direction
             while True:
                 try:
-                    dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-                    if dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
+                    move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
+                    if move_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
                         print("Not a valid direction")
                         continue
-                    player.move(worker, dir)
+                    player.move(worker, move_dir)
                     break
                 except:
-                    print(f"Cannot move {dir}")
+                    print(f"Cannot move {move_dir}")
 
             # Select build direction
             while True:
                 try:
-                    dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
-                    if dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
+                    build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
+                    if build_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
                         print("Not a valid direction")
                         continue
-                    player.build(worker, dir)
+                    player.build(worker, build_dir)
                     break
                 except:
-                    print(f"Cannot build {dir}")
+                    print(f"Cannot build {build_dir}")
+
+            print(f"{worker},{move_dir},{build_dir}")
             
             self._increment_turn_count()
 
