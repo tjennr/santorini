@@ -14,7 +14,6 @@
 
 # Cells need to keep track of their own height
 
-# ? x and y are inverted for soem reason but this is the only way i got it to move the right dir
 DIRECTION = {
     'n': {'y': 0, 'x': -1},
     'ne': {'y': 1, 'x': -1},
@@ -23,7 +22,7 @@ DIRECTION = {
     's': {'y': 0, 'x': 1},
     'sw': {'y': -1, 'x': 1},
     'w': {'y': -1, 'x': 0},
-    'nw': {'y': 0, 'x': -1},
+    'nw': {'y': -1, 'x': -1},
 }
 
 class PlayerTemplate:
