@@ -39,6 +39,7 @@ class SantoriniCLI:
             print(f"Turn: {self._board.get_turn_count()}, {player.color} ({player.workers})")
 
             # Select worker
+            # TODO: print "Not your worker if current player chooses worker from other player"
             worker = input("Select a worker to move:\n")
             while not player.check_valid_worker(worker):
                 print("Not a valid worker")
