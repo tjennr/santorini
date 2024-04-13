@@ -7,3 +7,5 @@
 - [x] Fix build onto alr occupied square
 - [x] Fix move out of bounds
 - [x] Check for game end (integrate observer.py)
+- [] Check if worker can move ("That worker cannot move")
+- [] Implement 2 random cpus
