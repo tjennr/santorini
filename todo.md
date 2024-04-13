@@ -6,4 +6,4 @@
 - [x] Fix build out of bounds
 - [x] Fix build onto alr occupied square
 - [x] Fix move out of bounds
-- [] Check for game end (integrate observer.py)
+- [x] Check for game end (integrate observer.py)

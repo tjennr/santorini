@@ -1,10 +1,12 @@
 from board import Board
 from player import PlayerWhite, PlayerBlue
+from observer import Subject, EndGameObserver
 
-class SantoriniCLI:
+class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
     def __init__(self):
+        super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board)
         self._playerBlue = PlayerBlue(self._board)
@@ -24,9 +26,21 @@ class SantoriniCLI:
         print("+--+--+--+--+--+")
 
     def run(self):
+        # Initalize observer to watch over game status
+        game_observer = EndGameObserver()
+        self.attach(game_observer)
+
         while True:
             self._display_board()
 
+            # Check if game has ended at start of each turn
+            # Restart game if warranted
+            if self._board.win_condition_satisfied():
+                self.notify("end")
+            if game_observer.yes_restart():
+                SantoriniCLI().run()
+
+            # Alternate worker for each turn and print
             if self._turn_count % 2 == 1:
                 player = self._playerWhite
             else:

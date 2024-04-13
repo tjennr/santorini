@@ -1,4 +1,5 @@
 class Cell:
+    """Represents each individual cell within the 5x5 board."""
     def __init__(self, x, y):
         self._x = x
         self._y = y
