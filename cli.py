@@ -33,19 +33,24 @@ class SantoriniCLI(Subject):
         while True:
             self._display_board()
 
-            # Check if game has ended at start of each turn
-            # Restart game if warranted
-            if self._board.win_condition_satisfied():
-                self.notify("end")
-            if game_observer.yes_restart():
-                SantoriniCLI().run()
-
-            # Alternate worker for each turn and print
+            # Alternate worker for each turn and display
             if self._turn_count % 2 == 1:
                 player = self._playerWhite
             else:
                 player = self._playerBlue
             print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
+
+            # Check if game has ended at start of each turn
+            if self._board.win_condition_satisfied():
+                if self._turn_count % 2 == 1:
+                    print("blue has won")
+                else:
+                    print("white has won")
+                self.notify("end")
+
+            # Restart game if warranted
+            if game_observer.restart():
+                SantoriniCLI().run()
 
             # Select worker
             # ? is 'a' a valid input for worker 'A' ?
