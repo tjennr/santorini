@@ -34,31 +34,28 @@ class PlayerTemplate:
 
     def move(self, worker_name, dir):
         worker = self.select_worker(worker_name)
-        new_x = worker.x + DIRECTION[dir]['x']
-        new_y = worker.y + DIRECTION[dir]['y']
-        if self._board.in_bounds(new_x, new_y):
+        curr_cell = self._board.get_specific_cell(worker.x, worker.y)
+        # Not sure if better to do try-except or just use method that checks if in bounds
+        try: 
+            new_x = worker.x + DIRECTION[dir]['x']
+            new_y = worker.y + DIRECTION[dir]['y']
             new_cell = self._board.get_specific_cell(new_x, new_y)
-            curr_cell = self._board.get_specific_cell(worker.x, worker.y)
-            if not new_cell.is_occupied() and new_cell.get_height() <= curr_cell.get_height() + 1:
+            if new_cell.is_valid_move(curr_cell):
                 curr_cell.remove()
                 new_cell.occupy(worker.name)
                 worker.update_pos(new_x, new_y)
-            else:
-                raise Exception
-        else:
+        except:
             raise Exception
-
+        
     def build(self, worker_name, dir):
         worker = self.select_worker(worker_name)
-        new_x = worker.x + DIRECTION[dir]['x']
-        new_y = worker.y + DIRECTION[dir]['y']
-        if self._board.in_bounds(new_x, new_y):
+        try:
+            new_x = worker.x + DIRECTION[dir]['x']
+            new_y = worker.y + DIRECTION[dir]['y']
             new_cell = self._board.get_specific_cell(new_x, new_y)
-            if not new_cell.is_occupied():
+            if new_cell.is_valid_build():
                 new_cell.build()
-            else:
-                raise Exception
-        else:
+        except:
             raise Exception
 
     def select_worker(self, name):
@@ -72,6 +69,18 @@ class PlayerTemplate:
             return True
         else:
             return False
+        
+    def no_moves_left(self, worker):
+        '''Returns True if a worker is not able to move'''
+        curr_cell = self._board.get_specific_cell(worker.x, worker.y)
+        for dir in DIRECTION:
+            new_x = worker.x + DIRECTION[dir]['x']
+            new_y = worker.y + DIRECTION[dir]['y']
+            if self._board.in_bounds(new_x, new_y):
+                new_cell = self._board.get_specific_cell(new_x, new_y)
+                if not new_cell.is_valid_move(curr_cell):
+                    return True
+        return False
 
 
 class PlayerWhite(PlayerTemplate):
@@ -99,3 +108,4 @@ class Worker:
     def update_pos(self, x, y):
         self.x = x
         self.y = y
+    

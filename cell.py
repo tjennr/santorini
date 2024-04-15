@@ -36,3 +36,19 @@ class Cell:
     def remove(self):
         '''Removes the worker current occupying the cell'''
         self._occupied_by = None
+
+    def is_valid_move(self, old_cell):
+        '''Returns True if worker can move from old cell to new cell (self)'''
+        if not self.is_occupied() and \
+            self.get_height() <= old_cell.get_height() + 1 and \
+            self.get_height() < 4:
+            return True
+        else:
+            return False
+        
+    def is_valid_build(self):
+        '''Returns True if worker can build at the cell'''
+        if not self.is_occupied() and self.get_height() < 4:
+            return True
+        else:
+            return False
