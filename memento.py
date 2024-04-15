@@ -1,26 +1,36 @@
 class Memento:
-    
     # State is the board data
     def __init__(self, state):
         self._state = state
 
-    def getState(self):
+    def get_state(self):
         return self._state
 
-class Originator:
-    def save():
-        pass
 
-    def redo():
-        pass
+class Originator:
+    def __init__(self, state):
+        self._state = state
+
+    def save(self):
+        return Memento(self._state)
+
+    def redo(self, memento):
+        self._state = memento.get_state()
+
 
 class CareTaker:
-    def __init__(self):
-        self._originator = Originator()
-        self._history = Memento()
+    def __init__(self, originator):
+        self._originator = originator
+        self._mementos = []
 
     def do():
         pass
-    
-    def undo():
-        pass
+
+    def undo(self):
+        if not len(self._mementos):
+            return
+        memento = self._mementos.pop()
+        try:
+            self._originator.restore(memento)
+        except Exception:
+            self.undo()
