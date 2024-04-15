@@ -14,7 +14,7 @@ class Originator:
     def save(self):
         return Memento(self._state)
 
-    def redo(self, memento):
+    def restore(self, memento):
         self._state = memento.get_state()
 
 
@@ -23,8 +23,8 @@ class CareTaker:
         self._originator = originator
         self._mementos = []
 
-    def do():
-        pass
+    def do(self):
+        self._mementos.append(self._originator.save())
 
     def undo(self):
         if not len(self._mementos):

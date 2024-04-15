@@ -5,12 +5,13 @@ from observer import Subject, EndGameObserver
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self):
+    def __init__(self, memento=False):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board)
         self._playerBlue = PlayerBlue(self._board)
         self._turn_count = 1
+        self._memento = memento
 
     def _display_board(self):
         board = self._board.get_cells()
@@ -39,6 +40,9 @@ class SantoriniCLI(Subject):
             else:
                 player = self._playerBlue
             print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
+
+            if self._memento:
+                action = input("undo, redo, or next")
 
             # Check if game has ended at start of each turn
             if self._board.win_condition_satisfied() or player.workers_cant_move():
@@ -104,7 +108,3 @@ class SantoriniCLI(Subject):
 
     def _increment_turn_count(self):
         self._turn_count += 1
-
-
-if __name__ == "__main__":
-    SantoriniCLI().run()
