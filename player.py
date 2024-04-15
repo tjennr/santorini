@@ -106,7 +106,7 @@ class Worker:
             new_y = self.y + DIRECTION[dir]['y']
             if board.in_bounds(new_x, new_y):
                 new_cell = board.get_specific_cell(new_x, new_y)
-                if not new_cell.is_valid_move(curr_cell):
-                    return True
-        return False
+                if new_cell.is_valid_move(curr_cell):
+                    return False
+        return True
     
