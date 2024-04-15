@@ -41,11 +41,12 @@ class SantoriniCLI(Subject):
             print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
 
             # Check if game has ended at start of each turn
-            if self._board.win_condition_satisfied():
-                if self._turn_count % 2 == 1:
-                    print("blue has won")
+            if self._board.win_condition_satisfied() or player.workers_cant_move():
+                if player.color == 'White':
+                    winner = 'blue'
                 else:
-                    print("white has won")
+                    winner = 'white'
+                print(f'{winner} has won')
                 self.notify("end")
 
             # Restart game if warranted
@@ -53,16 +54,25 @@ class SantoriniCLI(Subject):
                 SantoriniCLI().run()
 
             # Select worker
-            # ? is 'a' a valid input for worker 'A' ?
-            worker = input("Select a worker to move\n")
-            while not player.check_valid_worker(worker):
-                if player == self._playerWhite and worker.upper() == 'Y' or worker.upper() == 'Z':
-                    print("That is not your worker")
-                elif player == self._playerBlue and worker.upper() == 'A' or worker.upper() == 'B':
-                    print("That is not your worker")
-                else:
-                    print("Not a valid worker")
-                worker = input("Select a worker to move\n")
+            while True:
+                try:
+                    worker = input("Select a worker to move\n")
+                    if not player.check_valid_worker(worker):
+                        print("Not a valid worker")
+                        continue
+                    if player == self._playerWhite and worker.upper() == 'Y' or worker.upper() == 'Z':
+                        print("That is not your worker")
+                        continue
+                    if player == self._playerBlue and worker.upper() == 'A' or worker.upper() == 'B':
+                        print("That is not your worker")
+                        continue
+                    worker = player.select_worker(worker)
+                    if worker.no_moves_left():
+                        print("That worker cannot move")
+                        continue
+                    break
+                except:
+                    raise Exception
             
             # Select move direction
             while True:
