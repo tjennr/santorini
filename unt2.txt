@@ -1,0 +1,4 @@
+- Displaying the players on the board
+- Translated direction into movement
+- Worker move + build functionality
+    - Checking if a cell is valid (in bounds and no worker occupying) before moving or building there
