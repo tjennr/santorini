@@ -65,7 +65,7 @@ class CareTaker:
 
     def redo(self):
         '''Returns the last memento in history and restores it in originator's state'''
-        if not len(self._mementos):
+        if not len(self._undone):
             print("No mementos")
             return
         memento = self._undone.pop()
