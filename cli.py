@@ -12,7 +12,7 @@ class SantoriniCLI(Subject):
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board)
         self._playerBlue = PlayerBlue(self._board)
-        self._turn_count = 0
+        self._turn_count = 1
         self._memento = memento
         if memento:
             self._originator = Originator(self._board)
@@ -25,7 +25,7 @@ class SantoriniCLI(Subject):
         self.attach(game_observer)
 
         while True:
-            self._increment_turn_count()
+            # self._increment_turn_count()
             print(self._board)
 
             # Alternate worker for each turn and display
@@ -71,10 +71,10 @@ class SantoriniCLI(Subject):
                     if not player.check_valid_worker(worker):
                         print("Not a valid worker")
                         continue
-                    if player == self._playerWhite and worker.upper() == 'Y' or worker.upper() == 'Z':
+                    if player == self._playerWhite and (worker.upper() == 'Y' or worker.upper() == 'Z'):
                         print("That is not your worker")
                         continue
-                    if player == self._playerBlue and worker.upper() == 'A' or worker.upper() == 'B':
+                    if player == self._playerBlue and (worker.upper() == 'A' or worker.upper() == 'B'):
                         print("That is not your worker")
                         continue
                     worker = player.select_worker(worker)
@@ -111,7 +111,7 @@ class SantoriniCLI(Subject):
 
             print(f"{worker.name},{move_dir},{build_dir}")
 
-            # self._increment_turn_count()
+            self._increment_turn_count()
 
     def _increment_turn_count(self):
         self._turn_count += 1

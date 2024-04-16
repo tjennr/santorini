@@ -43,6 +43,8 @@ class PlayerTemplate:
                 curr_cell.remove()
                 new_cell.occupy(worker.name)
                 worker.update_pos(new_x, new_y)
+            else:
+                raise Exception
         except:
             raise Exception
         
@@ -53,6 +55,8 @@ class PlayerTemplate:
             new_cell = self._board.get_specific_cell(new_x, new_y)
             if new_cell.is_valid_build():
                 new_cell.build()
+            else:
+                raise Exception
         except:
             raise Exception
 
