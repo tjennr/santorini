@@ -1,3 +1,7 @@
+# Process:
+# 1. Initialize an Originator(state) where state is the board data we want to store
+# 2. Initialize Caretaker(originator) and do() to save the originator's state
+
 class Memento:
     '''Stores data as its state, specifically the santorini board'''
     # State is the board data
@@ -13,6 +17,9 @@ class Originator:
     '''Stores a state which can be changed.
     Also saves states inside mementos and restores states from mementos'''
     def __init__(self, state):
+        self._state = state
+
+    def change_state(self, state):
         self._state = state
 
     def save(self):
@@ -44,3 +51,8 @@ class CareTaker:
             self._originator.restore(memento)
         except Exception:
             self.undo()
+
+    # Need a way to return the originator's state
+    def show_undo(self):
+        self.undo()
+        return self._originator._state

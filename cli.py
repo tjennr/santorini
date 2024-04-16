@@ -1,6 +1,7 @@
 from board import Board
 from player import PlayerWhite, PlayerBlue
 from observer import Subject, EndGameObserver
+from memento import Originator, CareTaker
 
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
@@ -11,10 +12,16 @@ class SantoriniCLI(Subject):
         self._playerWhite = PlayerWhite(self._board)
         self._playerBlue = PlayerBlue(self._board)
         self._turn_count = 1
-        self._memento = memento
+        if memento:
+            self._memento = memento
+            self._originator = Originator(self._board.get_cells())
+            self._caretaker = CareTaker(self._originator)
 
-    def _display_board(self):
-        board = self._board.get_cells()
+    def _display_board(self, board=None):
+        # If board is none, then we just return the next board
+        if board is None:
+            board = self._board.get_cells()
+        # Else, we are given a board from a memento and don't need to use get_cells
         for row in board:
             print("+--+--+--+--+--+")
             row_string = ""
@@ -43,6 +50,10 @@ class SantoriniCLI(Subject):
 
             if self._memento:
                 action = input("undo, redo, or next")
+                # Potential use of state/strategy design?
+                if action == 'undo':
+                    self._caretaker.undo()
+
 
             # Check if game has ended at start of each turn
             if self._board.win_condition_satisfied() or player.workers_cant_move():
@@ -104,6 +115,10 @@ class SantoriniCLI(Subject):
 
             print(f"{worker},{move_dir},{build_dir}")
             
+            if self._memento:
+                self._originator.change_state(self._board.get_cells())
+                self._caretaker.do()
+
             self._increment_turn_count()
 
     def _increment_turn_count(self):
