@@ -53,7 +53,7 @@ class PlayerTemplate:
             new_x = worker.x + DIRECTION[dir]['x']
             new_y = worker.y + DIRECTION[dir]['y']
             new_cell = self._board.get_specific_cell(new_x, new_y)
-            if new_cell.is_valid_build():
+            if new_cell.is_valid_build() and self._board.in_bounds(new_x, new_y):
                 new_cell.build()
             else:
                 raise Exception
