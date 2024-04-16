@@ -7,7 +7,7 @@ import copy
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, memento=False):
+    def __init__(self, memento=True):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board)
@@ -39,15 +39,17 @@ class SantoriniCLI(Subject):
             if self._memento:
                 action = input("undo, redo, or next\n")
                 if action == 'undo':
+                    self._originator.change_state(self._board)
                     self._board = self._caretaker.undo()
                     continue
                 elif action == 'redo':
+                    self._originator.change_state(self._board)
                     self._board = self._caretaker.redo()
                     continue
                 elif action == 'next':
-                    # need to clear undone
                     self._originator.change_state(self._board)
-                    self._caretaker.save()
+                    self._caretaker.do()
+                    self._caretaker.clear_undone()
 
             # Check if game has ended at start of each turn
             if self._board.win_condition_satisfied() or player.workers_cant_move():

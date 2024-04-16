@@ -19,7 +19,7 @@ class Originator:
         self._state = copy.deepcopy(state)
 
     def change_state(self, state):
-        self._state = state
+        self._state = copy.deepcopy(state)
 
     def save(self):
         '''Saves its state inside a memento and returns the memento'''
@@ -40,7 +40,7 @@ class CareTaker:
         self._mementos = []
         self._undone = []
 
-    def save(self):
+    def do(self):
         '''Creates a memento from the originator's current state and
         appends it to the list of mementos (history)'''
         memento = self._originator.save()
@@ -48,10 +48,14 @@ class CareTaker:
 
     def undo(self):
         '''Returns the last memento in history and restores it in originator's state'''
-        # append current state to self._undone
         if not len(self._mementos):
             print("No mementos")
             return
+        
+        # We must save the current board and then afterwards add every board we undo to undone
+        memento = self._originator.save()
+        self._undone.append(memento)
+
         memento = self._mementos.pop()
         try:
             self._originator.restore(memento)
@@ -60,7 +64,8 @@ class CareTaker:
             self.undo()
 
     def redo(self):
-        if not len(self._undone):
+        '''Returns the last memento in history and restores it in originator's state'''
+        if not len(self._mementos):
             print("No mementos")
             return
         memento = self._undone.pop()
@@ -70,12 +75,8 @@ class CareTaker:
         except Exception:
             self.redo()
 
-    # def save_current_board(self, state):
-    #     self._undone.append
-    
-    # def clear_undone(self):
-    #     self._undone = []
-
+    def clear_undone(self):
+        self._undone = []
 
 # TODO:
 # undo function now works, however we pass back a copy of the og board
