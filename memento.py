@@ -40,7 +40,7 @@ class CareTaker:
         self._mementos = []
         self._undone = []
 
-    def do(self):
+    def save(self):
         '''Creates a memento from the originator's current state and
         appends it to the list of mementos (history)'''
         memento = self._originator.save()

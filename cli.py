@@ -47,7 +47,7 @@ class SantoriniCLI(Subject):
                 elif action == 'next':
                     # need to clear undone
                     self._originator.change_state(self._board)
-                    self._caretaker.do()
+                    self._caretaker.save()
 
             # Check if game has ended at start of each turn
             if self._board.win_condition_satisfied() or player.workers_cant_move():
