@@ -2,36 +2,26 @@ from board import Board
 from player import PlayerWhite, PlayerBlue
 from observer import Subject, EndGameObserver
 from memento import Originator, CareTaker
+import copy
 
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, memento=False):
+    def __init__(self, memento=True):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board)
         self._playerBlue = PlayerBlue(self._board)
-        self._turn_count = 1
+        self._turn_count = 0
+        self._memento = memento
         if memento:
-            self._memento = memento
-            self._originator = Originator(self._board.get_cells())
+            self._originator = Originator(self._board)
             self._caretaker = CareTaker(self._originator)
+            self._caretaker.do()
 
-    def _display_board(self, board=None):
-        # If board is none, then we just return the next board
-        if board is None:
-            board = self._board.get_cells()
-        # Else, we are given a board from a memento and don't need to use get_cells
-        for row in board:
-            print("+--+--+--+--+--+")
-            row_string = ""
-            for cell in row:
-                if cell.is_occupied():
-                    row_string += f"|{cell.get_height()}{cell.get_occupying_worker()}"
-                else:
-                    row_string += f"|{cell.get_height()} "
-            print(row_string + "|")
-        print("+--+--+--+--+--+")
+    # originator is making a deep copy of the board
+    # so when we try to restore, the saved board also has all current updates
+    # want to make a shallow copy
 
     def run(self):
         # Initalize observer to watch over game status
@@ -39,7 +29,8 @@ class SantoriniCLI(Subject):
         self.attach(game_observer)
 
         while True:
-            self._display_board()
+            self._increment_turn_count()
+            print(self._board)
 
             # Alternate worker for each turn and display
             if self._turn_count % 2 == 1:
@@ -48,12 +39,23 @@ class SantoriniCLI(Subject):
                 player = self._playerBlue
             print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
 
+            # Prompt for undo redo or next
             if self._memento:
-                action = input("undo, redo, or next")
+                action = input("undo, redo, or next\n")
                 # Potential use of state/strategy design?
                 if action == 'undo':
-                    self._caretaker.undo()
-
+                    self._board = self._caretaker.show_undo()
+                    continue
+                elif action == 'redo':
+                    self._caretaker.do()
+                    continue
+                elif action == 'next':
+                    deep_copy = copy.deepcopy(self._board)
+                    print("Saving this current board to originator:")
+                    print(deep_copy)
+                    self._originator.change_state(deep_copy)
+                    self._caretaker.do()
+                    print("Successfully saved current board to originator")
 
             # Check if game has ended at start of each turn
             if self._board.win_condition_satisfied() or player.workers_cant_move():
@@ -82,7 +84,7 @@ class SantoriniCLI(Subject):
                         print("That is not your worker")
                         continue
                     worker = player.select_worker(worker)
-                    if worker.no_moves_left():
+                    if worker.no_moves_left(self._board):
                         print("That worker cannot move")
                         continue
                     break
@@ -113,13 +115,13 @@ class SantoriniCLI(Subject):
                 except:
                     print(f"Cannot build {build_dir}")
 
-            print(f"{worker},{move_dir},{build_dir}")
-            
-            if self._memento:
-                self._originator.change_state(self._board.get_cells())
-                self._caretaker.do()
+            print(f"{worker.name},{move_dir},{build_dir}")
 
-            self._increment_turn_count()
+            # self._increment_turn_count()
 
     def _increment_turn_count(self):
         self._turn_count += 1
+
+
+if __name__ == '__main__':
+    SantoriniCLI().run()

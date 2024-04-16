@@ -2,6 +2,8 @@
 # 1. Initialize an Originator(state) where state is the board data we want to store
 # 2. Initialize Caretaker(originator) and do() to save the originator's state
 
+from board import Board
+
 class Memento:
     '''Stores data as its state, specifically the santorini board'''
     # State is the board data
@@ -24,11 +26,15 @@ class Originator:
 
     def save(self):
         '''Saves its state inside a memento and returns the memento'''
+        print("Created a memento and set it as originator's current state")
         return Memento(self._state)
 
     def restore(self, memento):
         '''Restores its state from a memento argument'''
         self._state = memento.get_state()
+
+    def get_state(self):
+        return self._state
 
 
 class CareTaker:
@@ -40,19 +46,26 @@ class CareTaker:
     def do(self):
         '''Creates a memento from the originator's current state and
         appends it to the list of mementos (history)'''
-        self._mementos.append(self._originator.save())
+        memento = self._originator.save()
+        self._mementos.append(memento)
+        print("Appended to caretaker's list of mementos")
 
     def undo(self):
         '''Pops the last memento in history and restores it in originator's state'''
         if not len(self._mementos):
+            print("No mementos")
             return
         memento = self._mementos.pop()
+        print("Popping last memento:")
+        print(memento.get_state())
         try:
             self._originator.restore(memento)
+            print("Restored memento in originator's state, returning memento")
         except Exception:
             self.undo()
 
-    # Need a way to return the originator's state
     def show_undo(self):
-        self.undo()
-        return self._originator._state
+        print("Memento history:")
+        for memento in self._mementos:
+            print(memento.get_state())
+        print("\n\n")

@@ -8,6 +8,5 @@ def main():
     # Enable undo/redo
     if sys.argv[3] == 'on':
         SantoriniCLI().run(memento=True)
-
     else:
         SantoriniCLI().run()

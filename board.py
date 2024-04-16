@@ -24,3 +24,18 @@ class Board:
                 if cell.get_height() == 3 and cell.is_occupied():
                     return True
         return False
+    
+    def __str__(self):
+        # Else, we are given a board from a memento and don't need to use get_cells
+        string = ""
+        for row in self._cells:
+            string += "+--+--+--+--+--+\n"
+            row_string = ""
+            for cell in row:
+                if cell.is_occupied():
+                    row_string += f"|{cell.get_height()}{cell.get_occupying_worker()}"
+                else:
+                    row_string += f"|{cell.get_height()} "
+            string += row_string + "|\n"
+        string += "+--+--+--+--+--+"
+        return string
