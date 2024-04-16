@@ -1,8 +1,5 @@
-# Process:
-# 1. Initialize an Originator(state) where state is the board data we want to store
-# 2. Initialize Caretaker(originator) and do() to save the originator's state
-
 from board import Board
+import copy
 
 class Memento:
     '''Stores data as its state, specifically the santorini board'''
@@ -19,14 +16,13 @@ class Originator:
     '''Stores a state which can be changed.
     Also saves states inside mementos and restores states from mementos'''
     def __init__(self, state):
-        self._state = state
+        self._state = copy.deepcopy(state)
 
     def change_state(self, state):
         self._state = state
 
     def save(self):
         '''Saves its state inside a memento and returns the memento'''
-        print("Created a memento and set it as originator's current state")
         return Memento(self._state)
 
     def restore(self, memento):
@@ -42,30 +38,45 @@ class CareTaker:
     def __init__(self, originator):
         self._originator = originator
         self._mementos = []
+        self._undone = []
 
     def do(self):
         '''Creates a memento from the originator's current state and
         appends it to the list of mementos (history)'''
         memento = self._originator.save()
         self._mementos.append(memento)
-        print("Appended to caretaker's list of mementos")
 
     def undo(self):
-        '''Pops the last memento in history and restores it in originator's state'''
+        '''Returns the last memento in history and restores it in originator's state'''
+        # append current state to self._undone
         if not len(self._mementos):
             print("No mementos")
             return
         memento = self._mementos.pop()
-        print("Popping last memento:")
-        print(memento.get_state())
         try:
             self._originator.restore(memento)
-            print("Restored memento in originator's state, returning memento")
+            return memento.get_state()
         except Exception:
             self.undo()
 
-    def show_undo(self):
-        print("Memento history:")
-        for memento in self._mementos:
-            print(memento.get_state())
-        print("\n\n")
+    def redo(self):
+        if not len(self._undone):
+            print("No mementos")
+            return
+        memento = self._undone.pop()
+        try:
+            self._originator.restore(memento)
+            return memento.get_state()
+        except Exception:
+            self.redo()
+
+    # def save_current_board(self, state):
+    #     self._undone.append
+    
+    # def clear_undone(self):
+    #     self._undone = []
+
+
+# TODO:
+# undo function now works, however we pass back a copy of the og board
+# so when moves are made, it still happens on the og board, not the restored one

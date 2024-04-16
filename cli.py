@@ -7,7 +7,7 @@ import copy
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, memento=True):
+    def __init__(self, memento=False):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board)
@@ -18,10 +18,6 @@ class SantoriniCLI(Subject):
             self._originator = Originator(self._board)
             self._caretaker = CareTaker(self._originator)
             self._caretaker.do()
-
-    # originator is making a deep copy of the board
-    # so when we try to restore, the saved board also has all current updates
-    # want to make a shallow copy
 
     def run(self):
         # Initalize observer to watch over game status
@@ -42,20 +38,16 @@ class SantoriniCLI(Subject):
             # Prompt for undo redo or next
             if self._memento:
                 action = input("undo, redo, or next\n")
-                # Potential use of state/strategy design?
                 if action == 'undo':
-                    self._board = self._caretaker.show_undo()
+                    self._board = self._caretaker.undo()
                     continue
                 elif action == 'redo':
-                    self._caretaker.do()
+                    self._board = self._caretaker.redo()
                     continue
                 elif action == 'next':
-                    deep_copy = copy.deepcopy(self._board)
-                    print("Saving this current board to originator:")
-                    print(deep_copy)
-                    self._originator.change_state(deep_copy)
+                    # need to clear undone
+                    self._originator.change_state(self._board)
                     self._caretaker.do()
-                    print("Successfully saved current board to originator")
 
             # Check if game has ended at start of each turn
             if self._board.win_condition_satisfied() or player.workers_cant_move():
