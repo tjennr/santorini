@@ -68,14 +68,14 @@ class SantoriniCLI(Subject):
             while True:
                 try:
                     worker = input("Select a worker to move\n")
-                    if not player.check_valid_worker(worker):
-                        print("Not a valid worker")
-                        continue
                     if player == self._playerWhite and (worker.upper() == 'Y' or worker.upper() == 'Z'):
                         print("That is not your worker")
                         continue
                     if player == self._playerBlue and (worker.upper() == 'A' or worker.upper() == 'B'):
                         print("That is not your worker")
+                        continue
+                    if not player.check_valid_worker(worker):
+                        print("Not a valid worker")
                         continue
                     worker = player.select_worker(worker)
                     if worker.no_moves_left(self._board):
