@@ -78,9 +78,9 @@ class SantoriniCLI(Subject):
                 self._originator.change_state(self)
                 self._caretaker.do_redo()
                 self.__dict__.update(self._caretaker.undo().__dict__)
-                self._caretaker.show_history()
                 return action
             elif action == 'redo':
+                # Save the current state in case user wants to undo again
                 self._originator.change_state(self)
                 self._caretaker.do()
                 self.__dict__.update(self._caretaker.redo().__dict__)

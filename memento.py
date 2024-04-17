@@ -45,6 +45,14 @@ class CareTaker:
         appends it to the list of mementos (history)'''
         memento = self._originator.save()
         self._mementos.append(memento)
+        print("Appended this to mementos:")
+        print(memento.get_state()._board)
+
+    def do_redo(self):
+        memento = self._originator.save()
+        self._undone.append(memento)
+        print("Appended this to undone:")
+        print(memento.get_state()._board)
 
     def undo(self):
         '''Returns the last memento in history and restores it in originator's state'''
@@ -70,18 +78,13 @@ class CareTaker:
         except Exception:
             self.redo()
 
-    def do_redo(self):
-        memento = self._originator.save()
-        self._undone.append(memento)
-        print("Appended to undone")
-
     def clear_undone(self):
         self._undone = []
 
     def show_history(self):
         print("Undo History:")
         for memento in self._undone:
-            print(memento.get_state()._board)
+            print(memento.get_state())
         print("\n")
 
 # TODO:
