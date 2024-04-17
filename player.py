@@ -74,6 +74,9 @@ class PlayerTemplate:
     
     def workers_cant_move(self):
         return self._worker1.no_moves_left(self._board) and self._worker2.no_moves_left(self._board)
+    
+    def get_workers(self):
+        return [self._worker1, self._worker2]
 
 
 class PlayerWhite(PlayerTemplate):

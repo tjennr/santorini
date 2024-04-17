@@ -8,7 +8,7 @@ import random
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=True, score_display=False):
+    def __init__(self, playerWhite_type='heuristic', playerBlue_type='heuristic', memento=True, score_display=False):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board, playerWhite_type)
@@ -50,7 +50,7 @@ class SantoriniCLI(Subject):
             elif player.type == 'random':
                 RandomTurn(self._board, player, self).run()
             elif player.type == 'heuristic':
-                pass
+                HeuristicTurn(self._board, player, self).run()
 
             self._increment_turn_count()
 
@@ -141,8 +141,7 @@ class RandomTurn:
         self._game = santorini_ref
     
     def run(self):
-        # ! getter
-        worker = random.choice([self._player._worker1, self._player._worker2])
+        worker = random.choice(self._player.get_workers())
         
         worker_moves = worker.enumerate_moves(self._board)
 
@@ -158,7 +157,30 @@ class RandomTurn:
         print(f"{worker.name},{move_dir},{build_dir}")
 
 class HeuristicTurn:
-    pass
+    def __init__(self, board, player, santorini_ref):
+        self._board = board
+        self._player = player
+        self._game = santorini_ref
+    
+    def run(self):
+        self._calculate_height_score()
+
+    def _calculate_height_score(self):
+        workers = self._player.get_workers()
+        curr_cell = self._board.get_specific_cell(workers[0].x, workers[0].y)
+        curr_cell2 = self._board.get_specific_cell(workers[1].x, workers[1].y)
+        return curr_cell.get_height() + curr_cell2.get_height()
+
+    def _calculate_center_score(self):
+        pass
+    
+    def _calculate_distance_score(self):
+        pass
+    
+    def _calculate_move_score(self):
+        pass
+    
+
 
 
 if __name__ == '__main__':
