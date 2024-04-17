@@ -7,11 +7,11 @@ import copy
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, memento=False):
+    def __init__(self, memento=False, playerWhite_type='human', playerBlue_type='human', enable_undo_redo=False, enable_score_display=False):
         super().__init__()
         self._board = Board()
-        self._playerWhite = PlayerWhite(self._board)
-        self._playerBlue = PlayerBlue(self._board)
+        self._playerWhite = PlayerWhite(self._board, playerWhite_type)
+        self._playerBlue = PlayerBlue(self._board, playerBlue_type)
         self._turn_count = 1
         self._memento = memento
         if memento:
@@ -118,4 +118,4 @@ class SantoriniCLI(Subject):
 
 
 if __name__ == '__main__':
-    SantoriniCLI().run()
+    SantoriniCLI(playerWhite_type='random').run()

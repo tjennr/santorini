@@ -26,9 +26,10 @@ DIRECTION = {
 }
 
 class PlayerTemplate:
-    def __init__(self, board):
+    def __init__(self, board, player_type):
         self.workers = f'{self._worker1.name}{self._worker2.name}'
         self._board = board
+        self._type = player_type
         self._board.set_worker_at_cell(self._worker1.name, self._worker1.x, self._worker1.y)
         self._board.set_worker_at_cell(self._worker2.name, self._worker2.x, self._worker2.y)
 
@@ -77,19 +78,19 @@ class PlayerTemplate:
 
 
 class PlayerWhite(PlayerTemplate):
-    def __init__(self, board):
+    def __init__(self, board, player_type):
         self.color = 'White'
         self._worker1 = Worker('A', 3, 1)
         self._worker2 = Worker('B', 1, 3)
-        super().__init__(board)
+        super().__init__(board, player_type)
 
 
 class PlayerBlue(PlayerTemplate):
-    def __init__(self, board):
+    def __init__(self, board, player_type):
         self.color = 'Blue'
         self._worker1 = Worker('Y', 1, 1)
         self._worker2 = Worker('Z', 3, 3)
-        super().__init__(board)
+        super().__init__(board, player_type)
     
 
 class Worker:
