@@ -73,13 +73,14 @@ class CareTaker:
     def do_redo(self):
         memento = self._originator.save()
         self._undone.append(memento)
+        print("Appended to undone")
 
     def clear_undone(self):
         self._undone = []
 
     def show_history(self):
-        print("History:")
-        for memento in self._mementos:
+        print("Undo History:")
+        for memento in self._undone:
             print(memento.get_state()._board)
         print("\n")
 

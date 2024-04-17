@@ -43,6 +43,11 @@ class SantoriniCLI(Subject):
             # Restart game if warranted
             if game_observer.restart():
                 SantoriniCLI().run()
+
+            if self._memento:
+                action = self.memento()
+                if action == 'redo' or action == 'undo':
+                    continue
             
             if player.type == 'human':
                 HumanTurn(self._board, player, self).run()
@@ -72,16 +77,13 @@ class SantoriniCLI(Subject):
                 # Save the current state in case user wants to redo
                 self._originator.change_state(self)
                 self._caretaker.do_redo()
-                old_turn_count = self._turn_count
                 self.__dict__.update(self._caretaker.undo().__dict__)
-                self._turn_count = old_turn_count
+                self._caretaker.show_history()
                 return action
             elif action == 'redo':
                 self._originator.change_state(self)
-                self._caretaker.do_redo()
-                old_turn_count = self._turn_count
+                self._caretaker.do()
                 self.__dict__.update(self._caretaker.redo().__dict__)
-                self._turn_count = old_turn_count
                 return action
             elif action == 'next':
                 self._originator.change_state(self)
@@ -96,11 +98,6 @@ class HumanTurn:
         self._game = santorini_ref
 
     def run(self):
-        if self._game._memento:
-            action = self._game.memento()
-            if action == 'redo' or action == 'undo':
-                return
-
         # Select worker
         while True:
             try:
