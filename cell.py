@@ -46,9 +46,11 @@ class Cell:
         else:
             return False
         
-    def is_valid_build(self):
+    def is_valid_build(self, exclude_pos_x=None, exclude_pos_y=None):
         '''Returns True if worker can build at the cell'''
         if (not self.is_occupied()) and self.get_height() < 4:
+            return True
+        elif self._x == exclude_pos_x and self._y == exclude_pos_y:
             return True
         else:
             return False
