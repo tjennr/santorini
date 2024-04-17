@@ -2,7 +2,6 @@ from board import Board
 from player import PlayerWhite, PlayerBlue
 from observer import Subject, EndGameObserver
 from memento import Originator, CareTaker
-import copy
 import random
 
 class SantoriniCLI(Subject):
@@ -70,6 +69,9 @@ class SantoriniCLI(Subject):
         while True:
             action = input("undo, redo, or next\n")
             if action == 'undo':
+                # Save the current state in case user wants to redo
+                self._originator.change_state(self._board)
+                self._caretaker.do_redo()
                 self._board = self._caretaker.undo()
                 return action
             elif action == 'redo':

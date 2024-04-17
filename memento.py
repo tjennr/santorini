@@ -70,6 +70,10 @@ class CareTaker:
         except Exception:
             self.redo()
 
+    def do_redo(self):
+        memento = self._originator.save()
+        self._undone.append(memento)
+
     def clear_undone(self):
         self._undone = []
 

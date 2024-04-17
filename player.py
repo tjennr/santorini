@@ -1,19 +1,3 @@
-# Template pattern
-
-# Each turn: move -> build
-
-# Move
-# can move down any level
-# can move up only 1 level
-# cannot move into space with worker or dome
-
-# Lose if
-# a player can't move any workers
-
-# Game ends when worker reaches 3rd level of building
-
-# Cells need to keep track of their own height
-
 DIRECTION = {
     'n': {'y': 0, 'x': -1},
     'ne': {'y': 1, 'x': -1},
