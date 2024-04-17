@@ -35,7 +35,6 @@ class PlayerTemplate:
 
     def move(self, worker, dir):
         curr_cell = self._board.get_specific_cell(worker.x, worker.y)
-        # Not sure if better to do try-except or just use method that checks if in bounds
         try: 
             new_x = worker.x + DIRECTION[dir]['x']
             new_y = worker.y + DIRECTION[dir]['y']
