@@ -92,7 +92,6 @@ class PlayerBlue(PlayerTemplate):
         self._worker2 = Worker('Z', 3, 3)
         super().__init__(board, player_type)
     
-
 class Worker:
     def __init__(self, name, x, y):
         self.name = name
