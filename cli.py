@@ -7,7 +7,7 @@ import copy
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, memento=False, playerWhite_type='human', playerBlue_type='human', enable_undo_redo=False, enable_score_display=False):
+    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=False, score_display=False):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board, playerWhite_type)
