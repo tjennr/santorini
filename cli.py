@@ -163,7 +163,7 @@ class HeuristicTurn:
         self._game = santorini_ref
     
     def run(self):
-        self._calculate_height_score()
+        self._calculate_center_score()
 
     def _calculate_height_score(self):
         workers = self._player.get_workers()
@@ -172,8 +172,9 @@ class HeuristicTurn:
         return curr_cell.get_height() + curr_cell2.get_height()
 
     def _calculate_center_score(self):
-        pass
-    
+        workers = self._player.get_workers()
+        workers[0].get_ring_level() + workers[1].get_ring_level()
+
     def _calculate_distance_score(self):
         pass
     

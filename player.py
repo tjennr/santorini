@@ -135,3 +135,32 @@ class Worker:
                                 available_builds.append(build_dir)
                         available_move_and_builds[move_dir] = available_builds
         return available_move_and_builds
+    
+    def get_ring_level(self):
+        # center
+        if self.x == 2 and self.y == 2:
+            return 2
+        # top row of 2nd inner ring
+        elif self.x == 1 and 1 <= self.y <= 3:
+            return 1
+        # middle row of 2nd inner ring
+        elif self.x == 2 and (self.y == 1 or self.y == 3):
+            return 1
+        # bottom row of 2nd inner ring
+        elif self.x == 3 and 1 <= self.y <= 3:
+            return 1
+        # top row of outer most ring
+        elif self.x == 0 and 0 <= self.y <= 4:
+            return 0
+        # second row of outer most ring
+        elif self.x == 1 and (self.y == 0 or self.y == 4):
+            return 0
+        # third row of outer most ring
+        elif self.x == 2 and (self.y == 0 or self.y == 4):
+            return 0
+        # fourth row of outer most ring
+        elif self.x == 3 and (self.y == 0 or self.y == 4):
+            return 0
+        # bottom row of outer most ring
+        elif self.x == 4 and 0 <= self.y <= 4:
+            return 0
