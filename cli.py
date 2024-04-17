@@ -8,7 +8,7 @@ import random
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, playerWhite_type='random', playerBlue_type='random', memento=False, score_display=False):
+    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=True, score_display=False):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board, playerWhite_type)
@@ -51,6 +51,121 @@ class SantoriniCLI(Subject):
                 RandomTurn(self._board, player, self).run()
             elif player.type == 'heuristic':
                 pass
+
+            self._increment_turn_count()
+
+    def _decide_player(self):
+        if self._turn_count % 2 == 1:
+            return self._playerWhite
+        else:
+            return self._playerBlue
+
+    def _increment_turn_count(self):
+        self._turn_count += 1
+
+class HumanTurn:
+    def __init__(self, board, player, santorini_ref):
+        self._board = board
+        self._player = player
+        self._game = santorini_ref
+
+    def run(self):
+        while True:
+            if self._game._memento:
+                action = input("undo, redo, or next\n")
+                if action == 'undo':
+                    self._game._originator.change_state(self._board)
+                    self._board = self._game._caretaker.undo()
+                    break
+                elif action == 'redo':
+                    self._game._originator.change_state(self._board)
+                    self._board = self._game._caretaker.redo()
+                    break
+                elif action == 'next':
+                    self._game._originator.change_state(self._board)
+                    self._game._caretaker.do()
+                    self._game._caretaker.clear_undone()
+
+            # Select worker
+            while True:
+                try:
+                    worker = input("Select a worker to move\n")
+                    if self._player.color == 'White' and (worker.upper() == 'Y' or worker.upper() == 'Z'):
+                        print("That is not your worker")
+                        continue
+                    if self._player.color == 'Blue' and (worker.upper() == 'A' or worker.upper() == 'B'):
+                        print("That is not your worker")
+                        continue
+                    if not self._player.check_valid_worker(worker):
+                        print("Not a valid worker")
+                        continue
+                    worker = self._player.select_worker(worker)
+                    if worker.no_moves_left(self._board):
+                        print("That worker cannot move")
+                        continue
+                    break
+                except:
+                    raise Exception
+
+            # Select move direction
+            while True:
+                try:
+                    move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
+                    if move_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
+                        print("Not a valid direction")
+                        continue
+                    self._player.move(worker, move_dir)
+                    break
+                except:
+                    print(f"Cannot move {move_dir}")
+
+            # Select build direction
+            while True:
+                try:
+                    build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
+                    if build_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
+                        print("Not a valid direction")
+                        continue
+                    self._player.build(worker, build_dir)
+                    break
+                except:
+                    print(f"Cannot build {build_dir}")
+
+            print(f"{worker.name},{move_dir},{build_dir}")
+            break
+
+class RandomTurn:
+    def __init__(self, board, player, santorini_ref):
+        self._board = board
+        self._player = player
+        self._game = santorini_ref
+    
+    def run(self):
+        # ! getter
+        worker = random.choice([self._player._worker1, self._player._worker2])
+        
+        worker_moves = worker.enumerate_moves(self._board)
+
+        # ! crashes after a few reruns?
+        move_dir = random.choice(list(worker_moves.keys()))
+        
+        build_dir = random.choice(worker_moves[move_dir])
+        
+        # ? assuming no errors ?
+        self._player.move(worker, move_dir)
+        self._player.build(worker, build_dir)
+
+        print(f"{worker.name},{move_dir},{build_dir}")
+
+class HeuristicTurn:
+    pass
+
+
+if __name__ == '__main__':
+    SantoriniCLI().run()
+
+
+
 
 
     """OG RUN CODE"""
@@ -146,100 +261,3 @@ class SantoriniCLI(Subject):
         #     print(f"{worker.name},{move_dir},{build_dir}")
 
         #     self._increment_turn_count()
-
-    def _decide_player(self):
-        if self._turn_count % 2 == 1:
-            return self._playerWhite
-        else:
-            return self._playerBlue
-
-    def _increment_turn_count(self):
-        self._turn_count += 1
-
-class HumanTurn:
-    def __init__(self, board, player, santorini_ref):
-        self._board = board
-        self._player = player
-        self._game = santorini_ref
-
-    def run(self):
-        # Select worker
-        while True:
-            try:
-                worker = input("Select a worker to move\n")
-                if self._player.color == 'White' and (worker.upper() == 'Y' or worker.upper() == 'Z'):
-                    print("That is not your worker")
-                    continue
-                if self._player.color == 'Blue' and (worker.upper() == 'A' or worker.upper() == 'B'):
-                    print("That is not your worker")
-                    continue
-                if not self._player.check_valid_worker(worker):
-                    print("Not a valid worker")
-                    continue
-                worker = self._player.select_worker(worker)
-                if worker.no_moves_left(self._board):
-                    print("That worker cannot move")
-                    continue
-                break
-            except:
-                raise Exception
-
-        # Select move direction
-        while True:
-            try:
-                move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-                if move_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
-                    print("Not a valid direction")
-                    continue
-                self._player.move(worker, move_dir)
-                break
-            except:
-                print(f"Cannot move {move_dir}")
-
-        # Select build direction
-        while True:
-            try:
-                build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
-                if build_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
-                    print("Not a valid direction")
-                    continue
-                self._player.build(worker, build_dir)
-                break
-            except:
-                print(f"Cannot build {build_dir}")
-
-        print(f"{worker.name},{move_dir},{build_dir}")
-
-        self._game._increment_turn_count()
-
-class RandomTurn:
-    def __init__(self, board, player, santorini_ref):
-        self._board = board
-        self._player = player
-        self._game = santorini_ref
-    
-    def run(self):
-        # ! getter
-        worker = random.choice([self._player._worker1, self._player._worker2])
-        
-        worker_moves = worker.enumerate_moves(self._board)
-
-        # ! crashes after a few reruns?
-        move_dir = random.choice(list(worker_moves.keys()))
-        
-        build_dir = random.choice(worker_moves[move_dir])
-        
-        # ? assuming no errors ?
-        self._player.move(worker, move_dir)
-        self._player.build(worker, build_dir)
-
-        print(f"{worker.name},{move_dir},{build_dir}")
-
-        self._game._increment_turn_count()
-
-class HeuristicTurn:
-    pass
-
-
-if __name__ == '__main__':
-    SantoriniCLI().run()
