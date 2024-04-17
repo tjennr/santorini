@@ -175,11 +175,17 @@ class HeuristicTurn:
         workers = self._player.get_workers()
         workers[0].get_ring_level() + workers[1].get_ring_level()
 
+    def _calculate_distance(self):
+        pass
+
     def _calculate_distance_score(self):
         pass
     
     def _calculate_move_score(self):
-        pass
+        c1, c2, c3 = 3, 2, 1
+        return c1 * self._calculate_height_score() \
+            + c2 * self._calculate_center_score() \
+            + c3 * self._calculate_distance_score()
     
 
 
