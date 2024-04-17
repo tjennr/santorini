@@ -51,11 +51,6 @@ class CareTaker:
         if not len(self._mementos):
             print("No mementos")
             return
-        
-        # We must save the current board and then afterwards add every board we undo to undone
-        memento = self._originator.save()
-        self._undone.append(memento)
-
         memento = self._mementos.pop()
         try:
             self._originator.restore(memento)
@@ -77,6 +72,12 @@ class CareTaker:
 
     def clear_undone(self):
         self._undone = []
+
+    def show_history(self):
+        print("History:")
+        for memento in self._mementos:
+            print(memento.get_state())
+        print("\n")
 
 # TODO:
 # undo function now works, however we pass back a copy of the og board

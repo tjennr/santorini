@@ -65,6 +65,21 @@ class SantoriniCLI(Subject):
     
     def get_both_players(self):
         return [self._playerWhite, self._playerBlue]
+    
+    def memento(self):
+        while True:
+            action = input("undo, redo, or next\n")
+            if action == 'undo':
+                self._board = self._caretaker.undo()
+                return action
+            elif action == 'redo':
+                self._board = self._caretaker.redo()
+                return action
+            elif action == 'next':
+                self._originator.change_state(self._board)
+                self._caretaker.do()
+                self._caretaker.clear_undone()
+                break
 
 class HumanTurn:
     def __init__(self, board, player, santorini_ref):
@@ -73,69 +88,58 @@ class HumanTurn:
         self._game = santorini_ref
 
     def run(self):
+        if self._game._memento:
+            action = self._game.memento()
+            if action == 'redo' or action == 'undo':
+                return
+
+        # Select worker
         while True:
-            if self._game._memento:
-                action = input("undo, redo, or next\n")
-                if action == 'undo':
-                    self._game._originator.change_state(self._board)
-                    self._board = self._game._caretaker.undo()
-                    break
-                elif action == 'redo':
-                    self._game._originator.change_state(self._board)
-                    self._board = self._game._caretaker.redo()
-                    break
-                elif action == 'next':
-                    self._game._originator.change_state(self._board)
-                    self._game._caretaker.do()
-                    self._game._caretaker.clear_undone()
+            try:
+                worker = input("Select a worker to move\n")
+                if self._player.color == 'White' and (worker.upper() == 'Y' or worker.upper() == 'Z'):
+                    print("That is not your worker")
+                    continue
+                if self._player.color == 'Blue' and (worker.upper() == 'A' or worker.upper() == 'B'):
+                    print("That is not your worker")
+                    continue
+                if not self._player.check_valid_worker(worker):
+                    print("Not a valid worker")
+                    continue
+                worker = self._player.select_worker(worker)
+                if worker.no_moves_left(self._board):
+                    print("That worker cannot move")
+                    continue
+                break
+            except:
+                raise Exception
 
-            # Select worker
-            while True:
-                try:
-                    worker = input("Select a worker to move\n")
-                    if self._player.color == 'White' and (worker.upper() == 'Y' or worker.upper() == 'Z'):
-                        print("That is not your worker")
-                        continue
-                    if self._player.color == 'Blue' and (worker.upper() == 'A' or worker.upper() == 'B'):
-                        print("That is not your worker")
-                        continue
-                    if not self._player.check_valid_worker(worker):
-                        print("Not a valid worker")
-                        continue
-                    worker = self._player.select_worker(worker)
-                    if worker.no_moves_left(self._board):
-                        print("That worker cannot move")
-                        continue
-                    break
-                except:
-                    raise Exception
+        # Select move direction
+        while True:
+            try:
+                move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
+                if move_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
+                    print("Not a valid direction")
+                    continue
+                self._player.move(worker, move_dir)
+                break
+            except:
+                print(f"Cannot move {move_dir}")
 
-            # Select move direction
-            while True:
-                try:
-                    move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-                    if move_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
-                        print("Not a valid direction")
-                        continue
-                    self._player.move(worker, move_dir)
-                    break
-                except:
-                    print(f"Cannot move {move_dir}")
+        # Select build direction
+        while True:
+            try:
+                build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
+                if build_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
+                    print("Not a valid direction")
+                    continue
+                self._player.build(worker, build_dir)
+                break
+            except:
+                print(f"Cannot build {build_dir}")
 
-            # Select build direction
-            while True:
-                try:
-                    build_dir = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
-                    if build_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
-                        print("Not a valid direction")
-                        continue
-                    self._player.build(worker, build_dir)
-                    break
-                except:
-                    print(f"Cannot build {build_dir}")
+        print(f"{worker.name},{move_dir},{build_dir}")
 
-            print(f"{worker.name},{move_dir},{build_dir}")
-            break
 
 class RandomTurn:
     def __init__(self, board, player, santorini_ref):
