@@ -85,8 +85,6 @@ class SantoriniCLI(Subject):
                 except:
                     raise Exception
             
-            dict = worker.enumerate_moves(self._board)
-            print(dict)
             # Select move direction
             while True:
                 try:

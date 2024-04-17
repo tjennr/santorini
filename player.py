@@ -115,7 +115,7 @@ class Worker:
         return True
     
     def enumerate_moves(self, board):
-        available_moves = {}
+        available_move_and_builds = {}
         curr_cell = board.get_specific_cell(self.x, self.y)
         for move_dir in DIRECTION:
             move_x = self.x + DIRECTION[move_dir]['x']
@@ -131,5 +131,5 @@ class Worker:
                             new_build_cell = board.get_specific_cell(new_build_x, new_build_y)
                             if new_build_cell.is_valid_build(self.x, self.y):
                                 available_builds.append(build_dir)
-                        available_moves[move_dir] = available_builds
-        return available_moves
+                        available_move_and_builds[move_dir] = available_builds
+        return available_move_and_builds
