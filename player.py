@@ -29,7 +29,7 @@ class PlayerTemplate:
     def __init__(self, board, player_type):
         self.workers = f'{self._worker1.name}{self._worker2.name}'
         self._board = board
-        self._type = player_type
+        self.type = player_type
         self._board.set_worker_at_cell(self._worker1.name, self._worker1.x, self._worker1.y)
         self._board.set_worker_at_cell(self._worker2.name, self._worker2.x, self._worker2.y)
 
