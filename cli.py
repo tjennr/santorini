@@ -8,7 +8,7 @@ import random
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, playerWhite_type='heuristic', playerBlue_type='heuristic', memento=True, score_display=False):
+    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=True, score_display=False):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board, playerWhite_type)
@@ -62,6 +62,9 @@ class SantoriniCLI(Subject):
 
     def _increment_turn_count(self):
         self._turn_count += 1
+    
+    def get_both_players(self):
+        return [self._playerWhite, self._playerBlue]
 
 class HumanTurn:
     def __init__(self, board, player, santorini_ref):
@@ -163,7 +166,11 @@ class HeuristicTurn:
         self._game = santorini_ref
     
     def run(self):
-        self._calculate_center_score()
+        worker = random.choice(self._player.get_workers())
+        worker_moves = worker.enumerate_moves(self._board)
+        for key in worker_moves:
+            for build_dir in worker_moves[key]:
+                self._calculate_move_score()
 
     def _calculate_height_score(self):
         workers = self._player.get_workers()
@@ -175,11 +182,22 @@ class HeuristicTurn:
         workers = self._player.get_workers()
         workers[0].get_ring_level() + workers[1].get_ring_level()
 
-    def _calculate_distance(self):
-        pass
+    def _calculate_distance(self, worker1, worker2):
+        # chebyshev distance formula
+        return max((worker2.y - worker1.y), (worker2.x - worker1.x))
 
     def _calculate_distance_score(self):
-        pass
+        players = self._game.get_both_players()
+        workers_AB = players[0].get_workers()
+        workers_YZ = players[1].get_workers()
+
+        distance_AZ = self._calculate_distance(workers_AB[0], workers_YZ[1])
+        distance_BY = self._calculate_distance(workers_AB[1], workers_YZ[0])
+
+        distance_AY = self._calculate_distance(workers_AB[0], workers_YZ[0])
+        distance_BZ = self._calculate_distance(workers_AB[1], workers_YZ[1])
+
+        return min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ)
     
     def _calculate_move_score(self):
         c1, c2, c3 = 3, 2, 1
