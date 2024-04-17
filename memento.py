@@ -80,7 +80,7 @@ class CareTaker:
     def show_history(self):
         print("History:")
         for memento in self._mementos:
-            print(memento.get_state())
+            print(memento.get_state()._board)
         print("\n")
 
 # TODO:

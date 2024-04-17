@@ -15,7 +15,7 @@ class SantoriniCLI(Subject):
         self._turn_count = 1
         self._memento = memento
         if memento:
-            self._originator = Originator(self._board)
+            self._originator = Originator(self)
             self._caretaker = CareTaker(self._originator)
             self._caretaker.do()
 
@@ -70,15 +70,21 @@ class SantoriniCLI(Subject):
             action = input("undo, redo, or next\n")
             if action == 'undo':
                 # Save the current state in case user wants to redo
-                self._originator.change_state(self._board)
+                self._originator.change_state(self)
                 self._caretaker.do_redo()
-                self._board = self._caretaker.undo()
+                old_turn_count = self._turn_count
+                self.__dict__.update(self._caretaker.undo().__dict__)
+                self._turn_count = old_turn_count
                 return action
             elif action == 'redo':
-                self._board = self._caretaker.redo()
+                self._originator.change_state(self)
+                self._caretaker.do_redo()
+                old_turn_count = self._turn_count
+                self.__dict__.update(self._caretaker.redo().__dict__)
+                self._turn_count = old_turn_count
                 return action
             elif action == 'next':
-                self._originator.change_state(self._board)
+                self._originator.change_state(self)
                 self._caretaker.do()
                 self._caretaker.clear_undone()
                 break
@@ -210,8 +216,6 @@ class HeuristicTurn:
         return c1 * self._calculate_height_score() \
             + c2 * self._calculate_center_score() \
             + c3 * self._calculate_distance_score()
-    
-
 
 
 if __name__ == '__main__':
