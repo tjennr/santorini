@@ -269,7 +269,7 @@ class HeuristicTurn:
             distance_AY = self._calculate_distance((move_x, move_y), (worker_Y.x, worker_Y.y))
             distance_BZ = self._calculate_distance((worker_B.x, worker_B.y), (worker_Z.x, worker_Z.y))
 
-            return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
+            return 8 - (min(distance_BY, distance_AY) + min(distance_BZ, distance_AZ))
         elif worker.name == worker_B.name:
             distance_AZ = self._calculate_distance((worker_A.x, worker_A.y), (worker_Z.x, worker_Z.y))
             distance_BY = self._calculate_distance((move_x, move_y), (worker_Y.x, worker_Y.y))
@@ -277,7 +277,7 @@ class HeuristicTurn:
             distance_AY = self._calculate_distance((worker_A.x, worker_A.y), (worker_Y.x, worker_Y.y))
             distance_BZ = self._calculate_distance((move_x, move_y), (worker_Z.x, worker_Z.y))
 
-            return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
+            return 8 - (min(distance_BY, distance_AY) + min(distance_BZ, distance_AZ))
         elif worker.name == worker_Y.name:
             distance_AZ = self._calculate_distance((worker_A.x, worker_A.y), (worker_Z.x, worker_Z.y))
             distance_BY = self._calculate_distance((worker_B.x, worker_B.y), (move_x, move_y))
