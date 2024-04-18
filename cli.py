@@ -7,13 +7,15 @@ import random
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, playerWhite_type='heuristic', playerBlue_type='heuristic', memento=False, score_display=False):
+    def __init__(self, playerWhite_type='heuristic', playerBlue_type='heuristic', memento=False, score_display=True):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board, playerWhite_type)
         self._playerBlue = PlayerBlue(self._board, playerBlue_type)
         self._turn_count = 1
         self._memento = memento
+        self._score_display = score_display
+
         if memento:
             self._originator = Originator(self)
             self._caretaker = CareTaker(self._originator)
@@ -29,7 +31,10 @@ class SantoriniCLI(Subject):
 
             # Alternate worker for each turn and display
             player = self._decide_player()
-            print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
+            if player.type == 'heuristic' and self._score_display == True:
+                print(f"Turn: {self._turn_count}, {player.color} ({player.workers}), ({0}, {0}, {0})")
+            else:
+                print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
 
             # Check if game has ended at start of each turn
             if self._board.win_condition_satisfied() or player.workers_cant_move():
@@ -146,7 +151,6 @@ class HumanTurn:
 
         print(f"{worker.name},{move_dir},{build_dir}")
 
-
 class RandomTurn:
     def __init__(self, board, player, santorini_ref):
         self._board = board
@@ -174,19 +178,39 @@ class HeuristicTurn:
         self._board = board
         self._player = player
         self._game = santorini_ref
+        self._c1, self._c2, self._c3 = 3, 2, 1
     
     def run(self):
         workers = self._player.get_workers()
+
+        max_height_score = -1
+        max_center_score = -1
+        max_distance_score = -1
+
+        best_worker = None
+        best_move_dir = None
+        best_build_dir = None
 
         for worker in workers:
             worker_moves = worker.enumerate_moves(self._board)
             for move_dir in worker_moves.keys():
                 move_x = worker.x + DIRECTION[move_dir]['x']
                 move_y = worker.y + DIRECTION[move_dir]['y']
+
                 height_score = self._calculate_height_score(worker, move_x, move_y)
                 center_score = self._calculate_center_score(worker, move_x, move_y)
-                distance_score = 0
-            print(f"{worker.name}: {height_score},{center_score},{distance_score}")
+                distance_score = self._calculate_distance_score(move_x, move_y)
+                move_score = self._calculate_move_score(max_height_score, max_center_score, max_distance_score)
+
+                if height_score >= max_height_score \
+                and center_score >= max_center_score \
+                and distance_score >= max_distance_score:
+                    max_height_score = height_score
+                    max_center_score = center_score
+                    max_distance_score = distance_score
+                    best_move_dir = move_dir
+
+            print(f"{worker.name}, move_score: {move_score} = ({max_height_score},{max_center_score},{distance_score}). best move: {best_move_dir}")
 
     def _calculate_height_score(self, worker, move_x, move_y):
         workers = self._player.get_workers()
@@ -216,22 +240,27 @@ class HeuristicTurn:
 
     def _calculate_distance_score(self, move_x, move_y):
         players = self._game.get_both_players()
-        workers_AB = players[0].get_workers()
-        workers_YZ = players[1].get_workers()
 
-        distance_AZ = self._calculate_distance(workers_AB[0], workers_YZ[1])
-        distance_BY = self._calculate_distance(workers_AB[1], workers_YZ[0])
+        if self._player == players[0]:
+            other_player = players[1]
+        else:
+            other_player = players[0]
 
-        distance_AY = self._calculate_distance(workers_AB[0], workers_YZ[0])
-        distance_BZ = self._calculate_distance(workers_AB[1], workers_YZ[1])
+        workers = self._player.get_workers()
 
-        return min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ)
+        # distance_AZ = self._calculate_distance(workers_AB[0], workers_YZ[1])
+        # distance_BY = self._calculate_distance(workers_AB[1], workers_YZ[0])
+
+        # distance_AY = self._calculate_distance(workers_AB[0], workers_YZ[0])
+        # distance_BZ = self._calculate_distance(workers_AB[1], workers_YZ[1])
+
+        # return min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ)
+        return 0
     
-    def _calculate_move_score(self, move_x, move_y):
-        c1, c2, c3 = 3, 2, 1
-        return c1 * self._calculate_height_score(move_x, move_y) \
-            + c2 * self._calculate_center_score(move_x, move_y) \
-            + c3 * self._calculate_distance_score(move_x, move_y)
+    def _calculate_move_score(self, height_score, center_score, distance_score):
+        return self._c1 * height_score \
+            + self._c2 * center_score \
+            + self._c3 * distance_score
 
 
 if __name__ == '__main__':
