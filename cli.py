@@ -35,7 +35,7 @@ class SantoriniCLI:
 
     def display_turn_info(self, player):
         '''Displays the player information at this round'''
-        if player.type == 'heuristic' and self._game._score_display == True:
+        if player.type == 'heuristic' and self._manager.get_scoredisplay == True:
             print(f"Turn: {self._manager.get_turncount()}, {player.color} ({player.workers}), ({0}, {0}, {0})")
         else:
             print(f"Turn: {self._manager.get_turncount()}, {player.color} ({player.workers})")

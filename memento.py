@@ -1,4 +1,3 @@
-from board import Board
 import copy
 
 class Memento:

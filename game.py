@@ -81,6 +81,10 @@ class GameManager(Subject):
         '''Returns the turn count'''
         return self._game._turn_count
     
+    def get_scoredisplay(self):
+        '''Returns True if the game is displaying the score'''
+        return self._game._score_display
+    
     def move(self, worker, dir):
         '''Moves a given worker in a given direction if possible, else raises exception'''
         curr_cell = self._game._board.get_specific_cell(worker.x, worker.y)
@@ -123,45 +127,3 @@ class GameState:
         self._playerBlue = PlayerBlue(self._board, playerBlue_type)
         self._turn_count = 1
         self._score_display = score_display
-
-
-# '''OG RUN CODE'''
-# Initalize observer to watch over game status
-        # game_observer = EndGameObserver()
-        # self.attach(game_observer)
-
-        # while True:
-            # print(self._game._board)
-
-            # # Alternate worker for each turn and display
-            # player = self._decide_player()
-            # if player.type == 'heuristic' and self._game._score_display == True:
-            #     print(f"Turn: {self._game._turn_count}, {player.color} ({player.workers}), ({0}, {0}, {0})")
-            # else:
-            #     print(f"Turn: {self._game._turn_count}, {player.color} ({player.workers})")
-
-            # # Check if game has ended at start of each turn
-            # if self._game._board.win_condition_satisfied() or player.workers_cant_move():
-            #     if player.color == 'White':
-            #         winner = 'blue'
-            #     else:
-            #         winner = 'white'
-            #     self._cli.display_winner(winner)
-            #     self.notify("end")
-
-            # # Restart game if warranted
-            # if game_observer.restart():
-            #     GameManager().run()
-
-            # if self._memento:
-            #     action = self.memento()
-            #     if action == 'redo' or action == 'undo':
-            #         continue
-            
-            # if player.type == 'human':
-            #     HumanTurn(self._game._board, player, self).run()
-            # elif player.type == 'random':
-            #     RandomTurn(self._game._board, player, self).run()
-            # elif player.type == 'heuristic':
-            #     HeuristicTurn(self._game._board, player, self).run()
-            #     break
