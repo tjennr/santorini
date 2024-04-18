@@ -1,0 +1,25 @@
+# Observer pattern
+We used the observer pattern to observe whether the game has ended with a EndGameOberserver object which observes the GameManager 
+as the subject.
+Whenever a game ending condition is met, such as a worker moving onto a building of height 3 or the current player having no available
+moves, the GameManager notifies the observer that the state is "end". The observer then asks the user if they would like to restart the
+game, then restarts if yes, or exits the program if no.
+
+# Template pattern
+We used the template pattern to implement the different players' turn behavior, as the behavior is dependent on whether the player is a
+human, random computer, or heuristic computer.
+
+# Memento pattern
+We used the memento pattern to implement the undo and redo feature. This was the obvious pattern choice for undo/redo as it allowed the 
+program to save and restore previous states of the game. 
+We created a GameState class which stored all the information needed for each state or round of the game, such as the board, the players, 
+the turn count, and the score. We then added this GameState as an instance of the GameManager object. Every time undo or redo is called, 
+the GameManager's GameState is updated to reflect the restored game state. 
+We chose to encapsulate information into a GameState class because if we were to have stored the board, 
+players, turn count, and score as instances in GameManager as well, then we would have had to store each of these objects in a memento as 
+well, so encapsulating it into a singular GameState object was much more concise.
+Additionally, examples of memento we went over in class only covered undo functionality. To implement the redo functionality, we created
+another list "undone" which has the current game state appended to every time "undo" is called, such that when "redo" is called, we can pop 
+off the last game state that was undone in the "undone" list. It is essentially the opposite of undo.
+
+# Command pattern

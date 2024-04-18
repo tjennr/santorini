@@ -8,11 +8,6 @@ class Subject:
         observer._subject = self
         self._observers.add(observer)
 
-    # ? never used ?
-    # def detach(self, observer):
-    #     observer._subject = None
-    #     self._observers.discard(observer)
-
     def notify(self, game_state):
         for observer in self._observers:
             observer.update(game_state)
