@@ -1,16 +1,46 @@
 from board import Board
-from player import PlayerWhite, PlayerBlue
+from player import PlayerWhite, PlayerBlue, DIRECTION
 from observer import Subject, EndGameObserver
 from memento import Originator, CareTaker
 from turn import HumanTurn, RandomTurn, HeuristicTurn
 
-class SantoriniCLI(Subject):
-    '''Controls the user command line interface'''
+# class SantoriniCLI:
+#     '''Displays read-eval-loop CLI'''
+#     def __init__(self, manager):
+#         self._manager = manager
 
-    # CLI interface should just store game state and anything that is constant throughout (i.e. Memento)
+#     def display_board(self, board):
+#         print(board)
+
+#     def display_winner(self, winner):
+#         print(f'{winner} has won')
+
+#     def choose_worker(self, player):
+#         '''Prompts player to choose a worker'''
+#         worker = input("Select a worker to move\n")
+#         try:
+#             self._manager.check_worker(worker, player)
+#         except:
+#             self.choose_worker(worker, player)
+         
+#     def move(self, worker, player):
+#         '''Prompts player to choose a direction to move'''
+#         move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
+#         try:
+#             self._manager.move(worker, move_dir)
+#         except:
+#              self.move(worker, player)
+
+#     def build(self):
+#         '''Prompts player to choose a direction to build'''
+#         pass
+
+class GameManager(Subject):
+    '''Controls the game'''
     def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=True, score_display=False):
         super().__init__()
         self._game = GameState(playerWhite_type, playerBlue_type, score_display)
+        # self._cli = SantoriniCLI(self)
         self._memento = memento
         if memento:
             self._originator = Originator(self)
@@ -37,12 +67,12 @@ class SantoriniCLI(Subject):
                     winner = 'blue'
                 else:
                     winner = 'white'
-                print(f'{winner} has won')
+                self._cli.display_winner(winner)
                 self.notify("end")
 
             # Restart game if warranted
             if game_observer.restart():
-                SantoriniCLI().run()
+                GameManager().run()
 
             if self._memento:
                 action = self.memento()
@@ -96,7 +126,50 @@ class SantoriniCLI(Subject):
                 self._caretaker.clear_undone()
                 break
 
+    # def move(self, worker, dir):
+    #     curr_cell = self._game._board.get_specific_cell(worker.x, worker.y)
+    #     try: 
+    #         new_x = worker.x + DIRECTION[dir]['x']
+    #         new_y = worker.y + DIRECTION[dir]['y']
+    #         new_cell = self._game._board.get_specific_cell(new_x, new_y)
+    #         if new_cell.is_valid_move(curr_cell) and self._game._board.in_bounds(new_x, new_y):
+    #             curr_cell.remove()
+    #             new_cell.occupy(worker.name)
+    #             worker.update_pos(new_x, new_y)
+    #         else:
+    #             raise Exception
+    #     except:
+    #         raise Exception
+        
+    # def build(self, worker, dir):
+    #     try:
+    #         new_x = worker.x + DIRECTION[dir]['x']
+    #         new_y = worker.y + DIRECTION[dir]['y']
+    #         new_cell = self._board.get_specific_cell(new_x, new_y)
+    #         if new_cell.is_valid_build() and self._board.in_bounds(new_x, new_y):
+    #             new_cell.build()
+    #         else:
+    #             raise Exception
+    #     except:
+    #         raise Exception
+    
+    # def check_worker(self, player, worker):
+    #     if player.color == 'White' and (worker.upper() == 'Y' or worker.upper() == 'Z'):
+    #         print("That is not your worker") 
+    #         raise Exception
+    #     if player.color == 'Blue' and (worker.upper() == 'A' or worker.upper() == 'B'):
+    #         print("That is not your worker")
+    #         raise Exception
+    #     if not player.check_valid_worker(worker):
+    #         print("Not a valid worker")
+    #         raise Exception
+    #     worker = player.select_worker(worker)
+    #     if worker.no_moves_left(self._board):
+    #         print("That worker cannot move")
+    #         raise Exception
+
 class GameState:
+    '''Stores a state of a game including the board, players, turn count, and score display'''
     def __init__(self, playerWhite_type, playerBlue_type, score_display):
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board, playerWhite_type)
@@ -104,6 +177,5 @@ class GameState:
         self._turn_count = 1
         self._score_display = score_display
 
-
 if __name__ == '__main__':
-    SantoriniCLI().run()
+    GameManager().run()

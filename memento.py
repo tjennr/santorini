@@ -52,9 +52,6 @@ class CareTaker:
 
     def undo(self):
         '''Returns the last memento in history and restores it in originator's state'''
-        # if not len(self._mementos):
-        #     print("No mementos")
-        #     raise Exception
         memento = self._history.pop()
         try:
             self._originator.restore(memento)
@@ -76,9 +73,6 @@ class CareTaker:
 
     def redo(self):
         '''Returns the last memento in history and restores it in originator's state'''
-        # if not len(self._undone):
-        #     print("No mementos")
-        #     raise Exception
         memento = self._undone.pop()
         try:
             self._originator.restore(memento)
@@ -88,13 +82,3 @@ class CareTaker:
 
     def clear_undone(self):
         self._undone = []
-
-    def show_history(self):
-        print("Undo History:")
-        for memento in self._undone:
-            print(memento.get_state()._board)
-        print("\n")
-
-# TODO:
-# undo function now works, however we pass back a copy of the og board
-# so when moves are made, it still happens on the og board, not the restored one
