@@ -200,8 +200,8 @@ class HeuristicTurn:
 
                 height_score = self._calculate_height_score(worker, move_x, move_y)
                 center_score = self._calculate_center_score(worker, move_x, move_y)
-                distance_score = self._calculate_distance_score(move_x, move_y)
-                move_score = self._calculate_move_score(self._max_height_score, self._max_center_score, self._max_distance_score)
+                distance_score = self._calculate_distance_score(worker, move_x, move_y)
+                move_score = self._calculate_move_score(height_score, center_score, distance_score)
 
                 if height_score >= self._max_height_score \
                 and center_score >= self._max_center_score \
@@ -211,9 +211,9 @@ class HeuristicTurn:
                     self._max_distance_score = distance_score
                     best_move_dir = move_dir
                     best_move_score = move_score
-            best_move_dict[worker] = [best_move_dir, best_move_score, self._max_height_score, self._max_center_score, self._max_distance_score]
+            best_move_dict[worker] = [worker.name, best_move_dir, best_move_score, self._max_height_score, self._max_center_score, self._max_distance_score]
         
-        # 'A': ['ne', 6, 0, 3, 0], 'B': ['sw', 6, 0, 3, 0]}
+        # obj1: ['A', 'ne', 12, 0, 3, 6], obj2: ['B', 'sw', 12, 0, 3, 6]}
         # key: best move dir, move score, height, center, distance
         print(best_move_dict)
         if list(best_move_dict.values())[0][1] ==list(best_move_dict.values())[1][1]:
@@ -243,25 +243,57 @@ class HeuristicTurn:
 
     def _calculate_distance(self, worker1, worker2):
         # chebyshev distance formula
-        return max(abs((worker2.y - worker1.y)), abs((worker2.x - worker1.x)))
+        return max(abs(worker2[1] - worker1[1]), abs(worker2[0] - worker1[0]))
 
-    def _calculate_distance_score(self, move_x, move_y):
+    def _calculate_distance_score(self, worker, move_x, move_y):
         players = self._game.get_both_players()
+        
+        for player in players:
+            if player.color == 'White':
+                pWhite = player
+            elif player.color == 'Blue':
+                pBlue = player
+        
+        white_workers = pWhite.get_workers()
+        worker_A = white_workers[0]
+        worker_B = white_workers[1]
 
-        if self._player == players[0]:
-            other_player = players[1]
-        else:
-            other_player = players[0]
+        blue_workers = pBlue.get_workers()
+        worker_Y = blue_workers[0]
+        worker_Z = blue_workers[1]
 
-        workers = self._player.get_workers()
+        if worker.name == worker_A.name:
+            distance_AZ = self._calculate_distance((move_x, move_y), (worker_Z.x, worker_Z.y))
+            distance_BY = self._calculate_distance((worker_B.x, worker_B.y), (worker_Y.x, worker_Y.y))
 
-        distance_AZ = self._calculate_distance(workers[0], workers[1])
-        distance_BY = self._calculate_distance(workers[1], workers[0])
+            distance_AY = self._calculate_distance((move_x, move_y), (worker_Y.x, worker_Y.y))
+            distance_BZ = self._calculate_distance((worker_B.x, worker_B.y), (worker_Z.x, worker_Z.y))
 
-        distance_AY = self._calculate_distance(workers[0], workers[0])
-        distance_BZ = self._calculate_distance(workers[1], workers[1])
+            return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
+        elif worker.name == worker_B.name:
+            distance_AZ = self._calculate_distance((worker_A.x, worker_A.y), (worker_Z.x, worker_Z.y))
+            distance_BY = self._calculate_distance((move_x, move_y), (worker_Y.x, worker_Y.y))
 
-        return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
+            distance_AY = self._calculate_distance((worker_A.x, worker_A.y), (worker_Y.x, worker_Y.y))
+            distance_BZ = self._calculate_distance((move_x, move_y), (worker_Z.x, worker_Z.y))
+
+            return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
+        elif worker.name == worker_Y.name:
+            distance_AZ = self._calculate_distance((worker_A.x, worker_A.y), (worker_Z.x, worker_Z.y))
+            distance_BY = self._calculate_distance((worker_B.x, worker_B.y), (move_x, move_y))
+
+            distance_AY = self._calculate_distance((worker_A.x, worker_A.y), (move_x, move_y))
+            distance_BZ = self._calculate_distance((worker_B.x, worker_B.y), (worker_Z.x, worker_Z.y))
+
+            return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
+        elif worker.name == worker_Z.name:
+            distance_AZ = self._calculate_distance((worker_A.x, worker_A.y), (move_x, move_y))
+            distance_BY = self._calculate_distance((worker_B.x, worker_B.y), (worker_Y.x, worker_Y.y))
+
+            distance_AY = self._calculate_distance((worker_A.x, worker_A.y), (worker_Y.x, worker_Y.y))
+            distance_BZ = self._calculate_distance((worker_B.x, worker_B.y), (move_x, move_y))
+
+            return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
     
     def _calculate_move_score(self, height_score, center_score, distance_score):
         return self._c1 * height_score \
