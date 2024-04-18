@@ -3,3 +3,4 @@
 - Worker move + build functionality
     - Checking if a cell is valid (in bounds and no worker occupying) before moving or building there
 - Checking if a worker cannot move + checking if a player has lost if both workers cannot move
+- Memento
