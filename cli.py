@@ -216,7 +216,7 @@ class HeuristicTurn:
         # obj1: ['A', 'ne', 12, 0, 3, 6], obj2: ['B', 'sw', 12, 0, 3, 6]}
         # key: best move dir, move score, height, center, distance
         print(best_move_dict)
-        if list(best_move_dict.values())[0][1] ==list(best_move_dict.values())[1][1]:
+        if list(best_move_dict.values())[0][2] == list(best_move_dict.values())[1][2]:
             worker = random.choice(list(best_move_dict.keys()))
 
     def _calculate_height_score(self, worker, move_x, move_y):
