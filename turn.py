@@ -2,10 +2,10 @@ import random
 from player import DIRECTION
 
 class TurnTemplate:
-    def __init__(self, board, player, santorini_ref):
+    def __init__(self, board, player, manager):
         self._board = board
         self._player = player
-        self._game = santorini_ref
+        self._manager = manager
 
     def run(self):
         raise NotImplementedError("Subclasses must implement the run method.")
@@ -41,7 +41,7 @@ class HumanTurn(TurnTemplate):
                 if move_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
                     print("Not a valid direction")
                     continue
-                self._player.move(worker, move_dir)
+                self._manager.move(worker, move_dir)
                 break
             except:
                 print(f"Cannot move {move_dir}")
@@ -53,7 +53,7 @@ class HumanTurn(TurnTemplate):
                 if build_dir not in ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']:
                     print("Not a valid direction")
                     continue
-                self._player.build(worker, build_dir)
+                self._manager.build(worker, build_dir)
                 break
             except:
                 print(f"Cannot build {build_dir}")
@@ -72,8 +72,8 @@ class RandomTurn(TurnTemplate):
         build_dir = random.choice(worker_moves[move_dir])
         
         # ? assuming no errors ?
-        self._player.move(worker, move_dir)
-        self._player.build(worker, build_dir)
+        self._manager.move(worker, move_dir)
+        self._manager.build(worker, build_dir)
 
         print(f"{worker.name},{move_dir},{build_dir}")
 

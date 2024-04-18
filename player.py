@@ -9,7 +9,7 @@ DIRECTION = {
     'nw': {'y': -1, 'x': -1},
 }
 
-class PlayerTemplate:
+class Player:
     def __init__(self, board, player_type):
         self.workers = f'{self._worker1.name}{self._worker2.name}'
         self._board = board
@@ -17,53 +17,29 @@ class PlayerTemplate:
         self._board.set_worker_at_cell(self._worker1.name, self._worker1.x, self._worker1.y)
         self._board.set_worker_at_cell(self._worker2.name, self._worker2.x, self._worker2.y)
 
-    def move(self, worker, dir):
-        curr_cell = self._board.get_specific_cell(worker.x, worker.y)
-        try: 
-            new_x = worker.x + DIRECTION[dir]['x']
-            new_y = worker.y + DIRECTION[dir]['y']
-            new_cell = self._board.get_specific_cell(new_x, new_y)
-            if new_cell.is_valid_move(curr_cell) and self._board.in_bounds(new_x, new_y):
-                curr_cell.remove()
-                new_cell.occupy(worker.name)
-                worker.update_pos(new_x, new_y)
-            else:
-                raise Exception
-        except:
-            raise Exception
-        
-    def build(self, worker, dir):
-        try:
-            new_x = worker.x + DIRECTION[dir]['x']
-            new_y = worker.y + DIRECTION[dir]['y']
-            new_cell = self._board.get_specific_cell(new_x, new_y)
-            if new_cell.is_valid_build() and self._board.in_bounds(new_x, new_y):
-                new_cell.build()
-            else:
-                raise Exception
-        except:
-            raise Exception
-
     def select_worker(self, name):
+        '''Returns a worker given a worker name'''
         if self._worker1.name == name:
             return self._worker1
         elif self._worker2.name == name:
             return self._worker2
 
     def check_valid_worker(self, worker):
+        '''Returns True if the given worker is this player's worker'''
         if worker == self._worker1.name or worker == self._worker2.name:
             return True
         else:
             return False
     
     def workers_cant_move(self):
+        '''Returns True if both of this player's workers cannot move'''
         return self._worker1.no_moves_left(self._board) and self._worker2.no_moves_left(self._board)
     
     def get_workers(self):
         return [self._worker1, self._worker2]
 
 
-class PlayerWhite(PlayerTemplate):
+class PlayerWhite(Player):
     def __init__(self, board, player_type):
         self.color = 'White'
         self._worker1 = Worker('A', 3, 1)
@@ -71,7 +47,7 @@ class PlayerWhite(PlayerTemplate):
         super().__init__(board, player_type)
 
 
-class PlayerBlue(PlayerTemplate):
+class PlayerBlue(Player):
     def __init__(self, board, player_type):
         self.color = 'Blue'
         self._worker1 = Worker('Y', 1, 1)
