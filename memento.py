@@ -45,7 +45,7 @@ class CareTaker:
         appends it to the list of mementos (history)'''
         memento = self._originator.save()
         self._mementos.append(memento)
-        print("Appended this to mementos:")
+        print("Appended this to undone:")
         print(memento.get_state()._board)
 
     def do_redo(self):
