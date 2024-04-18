@@ -1,5 +1,5 @@
 from board import Board
-from player import PlayerWhite, PlayerBlue
+from player import PlayerWhite, PlayerBlue, DIRECTION
 from observer import Subject, EndGameObserver
 from memento import Originator, CareTaker
 import random
@@ -7,7 +7,7 @@ import random
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=True, score_display=False):
+    def __init__(self, playerWhite_type='heuristic', playerBlue_type='heuristic', memento=False, score_display=False):
         super().__init__()
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board, playerWhite_type)
@@ -55,6 +55,7 @@ class SantoriniCLI(Subject):
                 RandomTurn(self._board, player, self).run()
             elif player.type == 'heuristic':
                 HeuristicTurn(self._board, player, self).run()
+                break
 
             self._increment_turn_count()
 
@@ -175,27 +176,45 @@ class HeuristicTurn:
         self._game = santorini_ref
     
     def run(self):
-        worker = random.choice(self._player.get_workers())
-        worker_moves = worker.enumerate_moves(self._board)
-        for key in worker_moves:
-            for build_dir in worker_moves[key]:
-                self._calculate_move_score()
-
-    def _calculate_height_score(self):
         workers = self._player.get_workers()
-        curr_cell = self._board.get_specific_cell(workers[0].x, workers[0].y)
-        curr_cell2 = self._board.get_specific_cell(workers[1].x, workers[1].y)
-        return curr_cell.get_height() + curr_cell2.get_height()
 
-    def _calculate_center_score(self):
+        for worker in workers:
+            worker_moves = worker.enumerate_moves(self._board)
+            for move_dir in worker_moves.keys():
+                move_x = worker.x + DIRECTION[move_dir]['x']
+                move_y = worker.y + DIRECTION[move_dir]['y']
+                height_score = self._calculate_height_score(worker, move_x, move_y)
+                center_score = self._calculate_center_score(worker, move_x, move_y)
+                distance_score = 0
+            print(f"{worker.name}: {height_score},{center_score},{distance_score}")
+
+    def _calculate_height_score(self, worker, move_x, move_y):
         workers = self._player.get_workers()
-        workers[0].get_ring_level() + workers[1].get_ring_level()
+
+        if worker == workers[0]:
+            other_worker = workers[1]
+        else:
+            other_worker = workers[0]
+
+        cell1 = self._board.get_specific_cell(move_x, move_y)
+        cell2 = self._board.get_specific_cell(other_worker.x, other_worker.y)
+        return cell1.get_height() + cell2.get_height()
+
+    def _calculate_center_score(self, worker, move_x, move_y):
+        workers = self._player.get_workers()
+
+        if worker == workers[0]:
+            other_worker = workers[1]
+        else:
+            other_worker = workers[0]
+
+        return worker.get_ring_level(move_x, move_y) + other_worker.get_ring_level(other_worker.x, other_worker.y)
 
     def _calculate_distance(self, worker1, worker2):
         # chebyshev distance formula
-        return max((worker2.y - worker1.y), (worker2.x - worker1.x))
+        return max(abs((worker2.y - worker1.y)), abs((worker2.x - worker1.x)))
 
-    def _calculate_distance_score(self):
+    def _calculate_distance_score(self, move_x, move_y):
         players = self._game.get_both_players()
         workers_AB = players[0].get_workers()
         workers_YZ = players[1].get_workers()
@@ -208,11 +227,11 @@ class HeuristicTurn:
 
         return min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ)
     
-    def _calculate_move_score(self):
+    def _calculate_move_score(self, move_x, move_y):
         c1, c2, c3 = 3, 2, 1
-        return c1 * self._calculate_height_score() \
-            + c2 * self._calculate_center_score() \
-            + c3 * self._calculate_distance_score()
+        return c1 * self._calculate_height_score(move_x, move_y) \
+            + c2 * self._calculate_center_score(move_x, move_y) \
+            + c3 * self._calculate_distance_score(move_x, move_y)
 
 
 if __name__ == '__main__':
