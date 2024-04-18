@@ -2,14 +2,16 @@ import random
 from player import DIRECTION
 
 class TurnTemplate:
-    pass
-
-class HumanTurn:
     def __init__(self, board, player, santorini_ref):
         self._board = board
         self._player = player
         self._game = santorini_ref
 
+    def run(self):
+        raise NotImplementedError("Subclasses must implement the run method.")
+
+
+class HumanTurn(TurnTemplate):
     def run(self):
         # Select worker
         while True:
@@ -58,12 +60,7 @@ class HumanTurn:
 
         print(f"{worker.name},{move_dir},{build_dir}")
 
-class RandomTurn:
-    def __init__(self, board, player, santorini_ref):
-        self._board = board
-        self._player = player
-        self._game = santorini_ref
-    
+class RandomTurn(TurnTemplate):
     def run(self):
         worker = random.choice(self._player.get_workers())
         

@@ -4,40 +4,14 @@ from observer import Subject, EndGameObserver
 from memento import Originator, CareTaker
 from turn import HumanTurn, RandomTurn, HeuristicTurn
 
-# class SantoriniCLI:
-#     '''Displays read-eval-loop CLI'''
-#     def __init__(self, manager):
-#         self._manager = manager
-
-#     def display_board(self, board):
-#         print(board)
-
-#     def display_winner(self, winner):
-#         print(f'{winner} has won')
-
-#     def choose_worker(self, player):
-#         '''Prompts player to choose a worker'''
-#         worker = input("Select a worker to move\n")
-#         try:
-#             self._manager.check_worker(worker, player)
-#         except:
-#             self.choose_worker(worker, player)
-         
-#     def move(self, worker, player):
-#         '''Prompts player to choose a direction to move'''
-#         move_dir = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-#         try:
-#             self._manager.move(worker, move_dir)
-#         except:
-#              self.move(worker, player)
-
-#     def build(self):
-#         '''Prompts player to choose a direction to build'''
-#         pass
+class SantoriniCLI:
+    '''Displays read-eval-loop CLI'''
+    def __init__(self):
+        pass
 
 class GameManager(Subject):
     '''Controls the game'''
-    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=True, score_display=False):
+    def __init__(self, playerWhite_type='human', playerBlue_type='random', memento=True, score_display=False):
         super().__init__()
         self._game = GameState(playerWhite_type, playerBlue_type, score_display)
         # self._cli = SantoriniCLI(self)
