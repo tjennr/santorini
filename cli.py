@@ -217,7 +217,9 @@ class HeuristicTurn:
         # key: best move dir, move score, height, center, distance
         print(best_move_dict)
         if list(best_move_dict.values())[0][2] == list(best_move_dict.values())[1][2]:
-            worker = random.choice(list(best_move_dict.keys()))
+            best_worker = random.choice(list(best_move_dict.keys()))
+        
+        print(best_worker.name)
 
     def _calculate_height_score(self, worker, move_x, move_y):
         workers = self._player.get_workers()
