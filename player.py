@@ -1,3 +1,5 @@
+from command import MoveCommand, BuildCommand
+
 DIRECTION = {
     'n': {'y': 0, 'x': -1},
     'ne': {'y': 1, 'x': -1},
@@ -10,10 +12,11 @@ DIRECTION = {
 }
 
 class Player:
-    def __init__(self, board, player_type):
+    def __init__(self, board, player_type, manager):
         self.workers = f'{self._worker1.name}{self._worker2.name}'
         self._board = board
         self.type = player_type
+        self._manager = manager
         self._board.set_worker_at_cell(self._worker1.name, self._worker1.x, self._worker1.y)
         self._board.set_worker_at_cell(self._worker2.name, self._worker2.x, self._worker2.y)
 
@@ -36,23 +39,34 @@ class Player:
         return self._worker1.no_moves_left(self._board) and self._worker2.no_moves_left(self._board)
     
     def get_workers(self):
+        '''Returns both workers'''
         return [self._worker1, self._worker2]
+    
+    def move(self, worker, direction):
+        '''Calls move command'''
+        move_command = MoveCommand(self._manager, worker, direction)
+        move_command.execute()
+
+    def build(self, worker, direction):
+        '''Calls build command'''
+        build_command = BuildCommand(self._manager, worker, direction)
+        build_command.execute()
 
 
 class PlayerWhite(Player):
-    def __init__(self, board, player_type):
+    def __init__(self, board, player_type, manager):
         self.color = 'White'
         self._worker1 = Worker('A', 3, 1)
         self._worker2 = Worker('B', 1, 3)
-        super().__init__(board, player_type)
+        super().__init__(board, player_type, manager)
 
 
 class PlayerBlue(Player):
-    def __init__(self, board, player_type):
+    def __init__(self, board, player_type, manager):
         self.color = 'Blue'
         self._worker1 = Worker('Y', 1, 1)
         self._worker2 = Worker('Z', 3, 3)
-        super().__init__(board, player_type)
+        super().__init__(board, player_type, manager)
     
 class Worker:
     def __init__(self, name, x, y):
@@ -61,6 +75,7 @@ class Worker:
         self.y = y
 
     def update_pos(self, x, y):
+        '''Updates position of worker given the x, y coordinates'''
         self.x = x
         self.y = y
 
@@ -77,6 +92,7 @@ class Worker:
         return True
     
     def enumerate_moves(self, board):
+        '''Returns dict of available moves and builds'''
         available_move_and_builds = {}
         curr_cell = board.get_specific_cell(self.x, self.y)
         for move_dir in DIRECTION:
@@ -97,6 +113,7 @@ class Worker:
         return available_move_and_builds
     
     def get_ring_level(self, x_pos, y_pos):
+        '''Returns the ring level'''
         # center
         if x_pos == 2 and y_pos == 2:
             return 2

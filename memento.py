@@ -18,6 +18,7 @@ class Originator:
         self._state = copy.deepcopy(state)
 
     def change_state(self, state):
+        '''Changes the current state of the originator'''
         self._state = copy.deepcopy(state)
 
     def save(self):
@@ -29,6 +30,7 @@ class Originator:
         self._state = memento.get_state()
 
     def get_state(self):
+        '''Returns the state of the originator'''
         return self._state
 
 
@@ -41,11 +43,13 @@ class CareTaker:
 
     def do(self):
         '''Creates a memento from the originator's current state and
-        appends it to the list of mementos (history)'''
+        appends it to the history list'''
         memento = self._originator.save()
         self._history.append(memento)
 
     def do_redo(self):
+        '''Creates a memento from the originator's current state and
+        appends it to the undone list'''
         memento = self._originator.save()
         self._undone.append(memento)
 
@@ -59,12 +63,14 @@ class CareTaker:
             self.undo()
     
     def history_isempty(self):
+        '''Returns True if history list is empty'''
         if not len(self._history):
             print("No mementos")
             return True
         return False
         
     def undone_isempty(self):
+        '''Returns True if undone list is empty'''
         if not len(self._undone):
             print("No mementos")
             return True
@@ -80,4 +86,5 @@ class CareTaker:
             self.redo()
 
     def clear_undone(self):
+        '''Clears the list of undone. Do this when player chooses "next"'''
         self._undone = []

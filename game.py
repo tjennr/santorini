@@ -8,14 +8,14 @@ class GameManager(Subject):
     '''Manages and modifies the game state. Also keeps track of the game state history'''
     def __init__(self, playerWhite_type='random', playerBlue_type='random', memento=False, score_display=False):
         super().__init__()
-        self._game = GameState(playerWhite_type, playerBlue_type, score_display)
         self._cli = SantoriniCLI(self)
+        self._game_observer = EndGameObserver()
+        self.attach(self._game_observer)
+        self._game = GameState(playerWhite_type, playerBlue_type, score_display, self)
         self._memento = memento
         if memento:
             self._originator = Originator(self)
             self._caretaker = CareTaker(self._originator)
-        self._game_observer = EndGameObserver()
-        self.attach(self._game_observer)
 
     def run(self):
         '''Run the CLI'''
@@ -42,7 +42,7 @@ class GameManager(Subject):
             GameManager().run()
     
     def get_both_players(self):
-        '''Returns both plays'''
+        '''Returns both players'''
         return [self._game._playerWhite, self._game._playerBlue]
     
     def memento(self):
@@ -119,11 +119,16 @@ class GameManager(Subject):
         self._game._turn_count += 1
 
 
+    def execute_command(self, command):
+        """Execute a command."""
+        command.execute()
+
+
 class GameState:
     '''Stores a state of a game including the board, players, turn count, and score display'''
-    def __init__(self, playerWhite_type, playerBlue_type, score_display):
+    def __init__(self, playerWhite_type, playerBlue_type, score_display, manager):
         self._board = Board()
-        self._playerWhite = PlayerWhite(self._board, playerWhite_type)
-        self._playerBlue = PlayerBlue(self._board, playerBlue_type)
+        self._playerWhite = PlayerWhite(self._board, playerWhite_type, manager)
+        self._playerBlue = PlayerBlue(self._board, playerBlue_type, manager)
         self._turn_count = 1
         self._score_display = score_display
