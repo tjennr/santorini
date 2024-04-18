@@ -37,40 +37,48 @@ class CareTaker:
     '''Works with mementos via the originator'''
     def __init__(self, originator):
         self._originator = originator
-        self._mementos = []
+        self._history = []
         self._undone = []
 
     def do(self):
         '''Creates a memento from the originator's current state and
         appends it to the list of mementos (history)'''
         memento = self._originator.save()
-        self._mementos.append(memento)
-        print(f"Length of _undone: {len(self._undone)}")
+        self._history.append(memento)
 
     def do_redo(self):
         memento = self._originator.save()
         self._undone.append(memento)
-        print(f"Length of _undone: {len(self._undone)}")
 
     def undo(self):
         '''Returns the last memento in history and restores it in originator's state'''
-        if not len(self._mementos):
-            print("No mementos")
-            return
-        memento = self._mementos.pop()
+        # if not len(self._mementos):
+        #     print("No mementos")
+        #     raise Exception
+        memento = self._history.pop()
         try:
             self._originator.restore(memento)
-            var = memento.get_state()
-            return var
+            return memento.get_state()
         except Exception:
             self.undo()
+    
+    def history_isempty(self):
+        if not len(self._history):
+            print("No mementos")
+            return True
+        return False
+        
+    def undone_isempty(self):
+        if not len(self._undone):
+            print("No mementos")
+            return True
+        return False
 
     def redo(self):
         '''Returns the last memento in history and restores it in originator's state'''
-        if not len(self._undone):
-            print(len(self._undone))
-            print("No mementos")
-            return
+        # if not len(self._undone):
+        #     print("No mementos")
+        #     raise Exception
         memento = self._undone.pop()
         try:
             self._originator.restore(memento)

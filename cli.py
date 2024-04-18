@@ -7,18 +7,14 @@ import random
 class SantoriniCLI(Subject):
     '''Controls the user command line interface'''
 
-    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=False, score_display=False):
+    # CLI interface should just store game state and anything that is constant throughout
+    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=True, score_display=False):
         super().__init__()
-        self._board = Board()
-        self._playerWhite = PlayerWhite(self._board, playerWhite_type)
-        self._playerBlue = PlayerBlue(self._board, playerBlue_type)
-        self._turn_count = 1
+        self._game = GameState(playerWhite_type, playerBlue_type, score_display)
         self._memento = memento
-        self._score_display = score_display
         if memento:
             self._originator = Originator(self)
             self._caretaker = CareTaker(self._originator)
-            self._caretaker.do()
 
     def run(self):
         # Initalize observer to watch over game status
@@ -26,17 +22,17 @@ class SantoriniCLI(Subject):
         self.attach(game_observer)
 
         while True:
-            print(self._board)
+            print(self._game._board)
 
             # Alternate worker for each turn and display
             player = self._decide_player()
-            if player.type == 'heuristic' and self._score_display == True:
-                print(f"Turn: {self._turn_count}, {player.color} ({player.workers}), ({0}, {0}, {0})")
+            if player.type == 'heuristic' and self._game._score_display == True:
+                print(f"Turn: {self._game._turn_count}, {player.color} ({player.workers}), ({0}, {0}, {0})")
             else:
-                print(f"Turn: {self._turn_count}, {player.color} ({player.workers})")
+                print(f"Turn: {self._game._turn_count}, {player.color} ({player.workers})")
 
             # Check if game has ended at start of each turn
-            if self._board.win_condition_satisfied() or player.workers_cant_move():
+            if self._game._board.win_condition_satisfied() or player.workers_cant_move():
                 if player.color == 'White':
                     winner = 'blue'
                 else:
@@ -54,54 +50,61 @@ class SantoriniCLI(Subject):
                     continue
             
             if player.type == 'human':
-                HumanTurn(self._board, player, self).run()
+                HumanTurn(self._game._board, player, self).run()
             elif player.type == 'random':
-                RandomTurn(self._board, player, self).run()
+                RandomTurn(self._game._board, player, self).run()
             elif player.type == 'heuristic':
-                HeuristicTurn(self._board, player, self).run()
+                HeuristicTurn(self._game._board, player, self).run()
                 break
 
             self._increment_turn_count()
 
     def _decide_player(self):
-        if self._turn_count % 2 == 1:
-            return self._playerWhite
+        if self._game._turn_count % 2 == 1:
+            return self._game._playerWhite
         else:
-            return self._playerBlue
+            return self._game._playerBlue
 
     def _increment_turn_count(self):
-        self._turn_count += 1
+        self._game._turn_count += 1
     
     def get_both_players(self):
-        return [self._playerWhite, self._playerBlue]
+        return [self._game._playerWhite, self._game._playerBlue]
     
-    @classmethod
-    def update_all(cls, state):
-        for instance in cls._instances:
-            instance.__dict__.update(state.__dict__)
-    
-    # TODO / ISSUES:
-    # When we do self.__dict__.update(), the caretaker's self._undo is reset and we cannot redo
     def memento(self):
         while True:
             action = input("undo, redo, or next\n")
             if action == 'undo':
-                # Save the current state in case user wants to redo
-                self._originator.change_state(self)
-                self._caretaker.do_redo()
-                self.__dict__.update(self._caretaker.undo().__dict__)
-                return action
+                if not self._caretaker.history_isempty():
+                    # Save the current state in case user wants to redo
+                    self._originator.change_state(self._game)
+                    self._caretaker.do_redo()
+                    self._game = self._caretaker.undo()
+                    return action
+                continue
             elif action == 'redo':
-                # Save the current state in case user wants to undo again
-                self._originator.change_state(self)
-                self._caretaker.do()
-                self.__dict__.update(self._caretaker.redo().__dict__)
-                return action
+                if not self._caretaker.undone_isempty():
+                    # Save the current state in case user wants to undo again
+                    self._originator.change_state(self._game)
+                    self._caretaker.do()
+                    self._game = self._caretaker.redo()
+                    return action
+                continue
             elif action == 'next':
-                self._originator.change_state(self)
+                self._originator.change_state(self._game)
                 self._caretaker.do()
                 self._caretaker.clear_undone()
                 break
+
+class GameState:
+    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=True, score_display=False):
+        # super().__init__()
+        self._board = Board()
+        self._playerWhite = PlayerWhite(self._board, playerWhite_type)
+        self._playerBlue = PlayerBlue(self._board, playerBlue_type)
+        self._turn_count = 1
+        self._score_display = score_display
+
 
 class HumanTurn:
     def __init__(self, board, player, santorini_ref):
