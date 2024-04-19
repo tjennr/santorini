@@ -1,13 +1,13 @@
 import copy
 
 class Memento:
-    '''Stores data as its state, specifically the santorini board'''
+    '''Stores the santorini game state'''
     # State is the board data
     def __init__(self, state):
         self._state = state
 
     def get_state(self):
-        '''Returns state'''
+        '''Returns game state'''
         return self._state
 
 
@@ -22,15 +22,15 @@ class Originator:
         self._state = copy.deepcopy(state)
 
     def save(self):
-        '''Saves its state inside a memento and returns the memento'''
+        '''Creates an instance of a memento that stores self's state and returns the memento'''
         return Memento(self._state)
 
     def restore(self, memento):
-        '''Restores its state from a memento argument'''
+        '''Restores its state from a given memento'''
         self._state = memento.get_state()
 
     def get_state(self):
-        '''Returns the state of the originator'''
+        '''Returns state'''
         return self._state
 
 
@@ -61,7 +61,16 @@ class CareTaker:
             return memento.get_state()
         except Exception:
             self.undo()
-    
+
+    def redo(self):
+        '''Returns the last memento in history and restores it in originator's state'''
+        memento = self._undone.pop()
+        try:
+            self._originator.restore(memento)
+            return memento.get_state()
+        except Exception:
+            self.redo()
+
     def history_isempty(self):
         '''Returns True if history list is empty'''
         if not len(self._history):
@@ -75,15 +84,6 @@ class CareTaker:
             print("No mementos")
             return True
         return False
-
-    def redo(self):
-        '''Returns the last memento in history and restores it in originator's state'''
-        memento = self._undone.pop()
-        try:
-            self._originator.restore(memento)
-            return memento.get_state()
-        except Exception:
-            self.redo()
 
     def clear_undone(self):
         '''Clears the list of undone. Do this when player chooses "next"'''

@@ -23,14 +23,14 @@ class GameManager(Subject):
 
     def alternate_player(self):
         '''Alternates player in this round'''
-        if self._game._turn_count % 2 == 1:
-            return self._game._playerWhite
+        if self._game.get_turncount() % 2 == 1:
+            return self._game.get_white()
         else:
-            return self._game._playerBlue
+            return self._game.get_blue()
         
     def check_game_end(self, player):
         '''Checks if the game has ended and notifies the observer which prompts for restart'''
-        if self._game._board.win_condition_satisfied() or player.workers_cant_move():
+        if self._game.get_board().win_condition_satisfied() or player.workers_cant_move():
             if player.color == 'White':
                 winner = 'blue'
             else:
@@ -43,7 +43,7 @@ class GameManager(Subject):
     
     def get_both_players(self):
         '''Returns both players'''
-        return [self._game._playerWhite, self._game._playerBlue]
+        return self._game.get_players()
     
     def memento(self):
         '''Checks if memento is turned on, and prompts for undo/redo/next if so'''
@@ -75,24 +75,24 @@ class GameManager(Subject):
 
     def get_board(self):
         '''Returns the board'''
-        return self._game._board
+        return self._game.get_board()
     
     def get_turncount(self):
         '''Returns the turn count'''
-        return self._game._turn_count
+        return self._game.get_turncount()
     
     def get_scoredisplay(self):
         '''Returns True if the game is displaying the score'''
-        return self._game._score_display
+        return self._game.get_scoredisplay()
     
     def move(self, worker, dir):
         '''Moves a given worker in a given direction if possible, else raises exception'''
-        curr_cell = self._game._board.get_specific_cell(worker.x, worker.y)
+        curr_cell = self._game.get_board().get_specific_cell(worker.x, worker.y)
         try: 
             new_x = worker.x + DIRECTION[dir]['x']
             new_y = worker.y + DIRECTION[dir]['y']
-            new_cell = self._game._board.get_specific_cell(new_x, new_y)
-            if new_cell.is_valid_move(curr_cell) and self._game._board.in_bounds(new_x, new_y):
+            new_cell = self._game.get_board().get_specific_cell(new_x, new_y)
+            if new_cell.is_valid_move(curr_cell) and self._game.get_board().in_bounds(new_x, new_y):
                 curr_cell.remove()
                 new_cell.occupy(worker.name)
                 worker.update_pos(new_x, new_y)
@@ -106,8 +106,8 @@ class GameManager(Subject):
         try:
             new_x = worker.x + DIRECTION[dir]['x']
             new_y = worker.y + DIRECTION[dir]['y']
-            new_cell = self._game._board.get_specific_cell(new_x, new_y)
-            if new_cell.is_valid_build() and self._game._board.in_bounds(new_x, new_y):
+            new_cell = self._game.get_board().get_specific_cell(new_x, new_y)
+            if new_cell.is_valid_build() and self._game.get_board().in_bounds(new_x, new_y):
                 new_cell.build()
             else:
                 raise Exception
@@ -116,8 +116,7 @@ class GameManager(Subject):
         
     def increment_turn_count(self):
         '''Increments the game's turn count'''
-        self._game._turn_count += 1
-
+        self._game.increment_turn_count()
 
     def execute_command(self, command):
         """Execute a command."""
@@ -132,3 +131,31 @@ class GameState:
         self._playerBlue = PlayerBlue(self._board, playerBlue_type, manager)
         self._turn_count = 1
         self._score_display = score_display
+
+    def get_board(self):
+        '''Returns the board'''
+        return self._board
+    
+    def get_white(self):
+        '''Returns player White'''
+        return self._playerWhite
+    
+    def get_blue(self):
+        '''Returns player Blue'''
+        return self._playerBlue
+
+    def get_players(self):
+        '''Returns both players'''
+        return [self._playerWhite, self._playerBlue]
+    
+    def get_turncount(self):
+        '''Returns turn count'''
+        return self._turn_count
+    
+    def get_scoredisplay(self):
+        '''Returns True if the game is displaying the score'''
+        return self._score_display
+    
+    def increment_turn_count(self):
+        '''Increments the game's turn count'''
+        self._turn_count += 1

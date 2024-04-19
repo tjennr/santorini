@@ -12,16 +12,17 @@ DIRECTION = {
 }
 
 class Player:
+    '''A player with 2 workers, a specified player type, and a reference to the board and game manager'''
     def __init__(self, board, player_type, manager):
         self.workers = f'{self._worker1.name}{self._worker2.name}'
-        self._board = board
         self.type = player_type
+        self._board = board
         self._manager = manager
         self._board.set_worker_at_cell(self._worker1.name, self._worker1.x, self._worker1.y)
         self._board.set_worker_at_cell(self._worker2.name, self._worker2.x, self._worker2.y)
 
     def select_worker(self, name):
-        '''Returns a worker given a worker name'''
+        '''Returns the player's worker given a worker name'''
         if self._worker1.name == name:
             return self._worker1
         elif self._worker2.name == name:
@@ -69,13 +70,14 @@ class PlayerBlue(Player):
         super().__init__(board, player_type, manager)
     
 class Worker:
+    '''A worker with an x, y coordinate that corresponds with the worker's position on the game board'''
     def __init__(self, name, x, y):
         self.name = name
         self.x = x
         self.y = y
 
     def update_pos(self, x, y):
-        '''Updates position of worker given the x, y coordinates'''
+        '''Updates position of worker with the given x, y coordinates'''
         self.x = x
         self.y = y
 
