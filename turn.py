@@ -96,6 +96,11 @@ class HeuristicTurn:
         self._best_move_data = []
 
     def run(self):
+        self._best_move_data = self.get_best_move_data()
+        move_dir = self._best_move_data[1]
+        print(self._best_move_data)
+
+    def get_best_move_data(self):
         workers = self._player.get_workers()
 
         move_scores = []
@@ -142,14 +147,12 @@ class HeuristicTurn:
             self._center_score = best_moves_list[0][5]
             self._distance_score = best_moves_list[0][6]
 
-        self._best_move_data = [best_worker.name, best_move_dir, best_build_dir, self._height_score, self._center_score, self._distance_score]
-        
-        print(self._best_move_data)
+        return [best_worker.name, best_move_dir, best_build_dir, self._height_score, self._center_score, self._distance_score]
 
     def _calculate_height_score(self, worker, move_x, move_y, build_x, build_y):
         workers = self._player.get_workers()
 
-        if worker == workers[0]
+        if worker == workers[0]:
             other_worker = workers[1]
         else:
             other_worker = workers[0]
