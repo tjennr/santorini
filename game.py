@@ -132,7 +132,6 @@ class GameState:
         self._playerBlue = PlayerBlue(self._board, playerBlue_type, manager)
         self._turn_count = 1
         self._score_display = score_display
-        self._best_move_data = []
 
     def get_board(self):
         '''Returns the board'''
@@ -157,9 +156,6 @@ class GameState:
     def get_scoredisplay(self):
         '''Returns True if the game is displaying the score'''
         return self._score_display
-    
-    def get_heuristic_move_data(self):
-        return self._best_move_data
     
     def increment_turn_count(self):
         '''Increments the game's turn count'''
