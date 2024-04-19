@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) >= 5:
         if sys.argv[4] == 'on':
-            score = True
+            score_display = True
 
     # Run the game
     GameManager(playerWhite, playerBlue, memento, score_display).run()
