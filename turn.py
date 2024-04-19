@@ -3,6 +3,7 @@ from player import DIRECTION
 
 
 class TurnTemplate:
+    '''A template for a turn, which can be human-made, randomly-made, or heuristically-made'''
     def __init__(self, board, player, manager):
         self._board = board
         self._player = player
@@ -14,6 +15,7 @@ class TurnTemplate:
 
 class HumanTurn(TurnTemplate):
     def run(self):
+        '''Takes user input to decide what worker to use and what direction to move/build to'''
         # Select worker
         while True:
             try:
@@ -59,34 +61,45 @@ class HumanTurn(TurnTemplate):
             except:
                 print(f"Cannot build {build_dir}")
 
+        # Print move data
         print(f"{worker.name},{move_dir},{build_dir}")
 
 
 class RandomTurn(TurnTemplate):
+    '''Randomly decides which worker to use, where to move, and where to build to'''
     def run(self):
+        # Randomly choose worker
         worker = random.choice(self._player.get_workers())
 
+        # Get all possible moves and corresponding build directions for that worker
         worker_moves = worker.enumerate_moves(self._board)
 
+        # If no moves available...
         if worker_moves == {}:
+            # Try to move other worker
             workers = self._player.get_workers()
             if worker == workers[0]:
                 worker = workers[1]
             else:
                 worker = workers[0]
+            # Get other worker's possible moves
             worker_moves = worker.enumerate_moves(self._board)
+            # If other worker also has no moves left, end the game
             if worker_moves == {}:
                 self._manager.notify("end")
                 return
 
+        # Randomly choose move direction, represented by the keys in the dictionary
         move_dir = random.choice(list(worker_moves.keys()))
 
+        # Randomly choose build direction, represented by the values of the move direction key
         build_dir = random.choice(worker_moves[move_dir])
         
-        # ? assuming no errors ?
+        # Move and build in that given direction
         self._player.move(worker, move_dir)
         self._player.build(worker, build_dir)
 
+        # Print move stats
         print(f"{worker.name},{move_dir},{build_dir}")
 
 
