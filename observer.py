@@ -41,6 +41,8 @@ class EndGameObserver(Observer):
                     break
                 elif restart == "no":
                     exit(0)
+                else:
+                    continue
     
     def restart(self):
         '''Returns True if restart is True'''
