@@ -125,7 +125,6 @@ class HeuristicTurn(TurnTemplate):
                     build_x = move_x + DIRECTION[build_dir]['x']
                     build_y = move_y + DIRECTION[build_dir]['y']
 
-                    # ! check if height is 3 first
                     move_to_cell = self._board.get_specific_cell(move_x, move_y)
                     if move_to_cell.get_height == 3:
                         return [worker, move_dir, build_dir, self._height_score, self._center_score, self._distance_score]
