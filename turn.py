@@ -149,7 +149,7 @@ class HeuristicTurn:
     def _calculate_height_score(self, worker, move_x, move_y, build_x, build_y):
         workers = self._player.get_workers()
 
-        if worker == workers[0]:
+        if worker == workers[0]
             other_worker = workers[1]
         else:
             other_worker = workers[0]
