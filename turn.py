@@ -14,8 +14,8 @@ class TurnTemplate:
 
 
 class HumanTurn(TurnTemplate):
+    '''Takes user input to decide what worker to use and what direction to move/build to'''
     def run(self):
-        '''Takes user input to decide what worker to use and what direction to move/build to'''
         # Select worker
         while True:
             try:
@@ -104,8 +104,12 @@ class RandomTurn(TurnTemplate):
 
 
 class HeuristicTurn(TurnTemplate):
+    '''Calculates move score based on certain critera and moves worker that has the highest move score'''
     def run(self):
+        # Get list containing the best move data
         best_move_data = self.get_best_move_data()
+
+        # Assign corresponding data points in list to variables
         worker = best_move_data[0]
         move_dir = best_move_data[1]
         build_dir = best_move_data[2]
@@ -113,63 +117,87 @@ class HeuristicTurn(TurnTemplate):
         center_score = best_move_data[4]
         distance_score = best_move_data[5]
 
+        # Move player in best direction, build in best direction
         self._player.move(worker, move_dir)
         self._player.build(worker, build_dir)
 
-        print(f"{worker.name},{move_dir},{build_dir} ({height_score}, {center_score}, {distance_score})")
+        # Print stats, accounting for score_display boolean
+        if self._manager.get_scoredisplay() == True:
+            print(f"{worker.name},{move_dir},{build_dir} ({height_score}, {center_score}, {distance_score})")
+        else:
+            print(f"{worker.name},{move_dir},{build_dir}")
 
     def get_best_move_data(self):
+        '''Iterates through every possible move and corresponding build direction and finds
+        which combination would yield the highest move score. Returns a list containing the best
+        worker to move, move direction, build direction, and height/center/distance scores'''
+
+        # Get current player's workers
         workers = self._player.get_workers()
 
+        # Initialize lists to keep track of best scores
         move_scores = []
         move_list = []
         best_moves_list = []
 
+        # For each worker get all possible moves and corresponding build directions
         for worker in workers:
             worker_moves = worker.enumerate_moves(self._board)
+            # For each possible move direction and for each possible build direction tied to the move direction..
             for move_dir in worker_moves.keys():
                 for build_dir in worker_moves[move_dir]:
+                    # Calculate where the new x/y coords would be and get that cell
                     move_x = worker.x + DIRECTION[move_dir]['x']
                     move_y = worker.y + DIRECTION[move_dir]['y']
                     build_x = move_x + DIRECTION[build_dir]['x']
                     build_y = move_y + DIRECTION[build_dir]['y']
-
                     move_to_cell = self._board.get_specific_cell(move_x, move_y)
-                    if move_to_cell.get_height == 3:
-                        return [worker, move_dir, build_dir, self._height_score, self._center_score, self._distance_score]
 
-                    height_score = self._calculate_height_score(worker, move_x, move_y, build_x, build_y)
+                    # If the cell being moved to has a height of 3, don't perform any calculations,
+                    # just return moving to that cell as the best direction, as it results in an instant win
+                    if move_to_cell.get_height == 3:
+                        return [worker, move_dir, build_dir, -1, -1, -1]
+
+                    # Calculate scores
+                    height_score = self._calculate_height_score(worker, move_x, move_y)
                     center_score = self._calculate_center_score(worker, move_x, move_y)
                     distance_score = self._calculate_distance_score(worker, move_x, move_y)
                     move_score = self._calculate_move_score(height_score, center_score, distance_score)
+
+                    # Append all possible move scores to list of move scores
                     move_scores.append(move_score)
+
+                    # Append all possible move/build directions for each worker to list
                     move_list.append((worker, move_score, move_dir, build_dir, height_score, center_score, distance_score))
         
+        # Now that list is populated, find the max move score
         best_move_score = max(move_scores)
 
+        # Go through each tuple in move_list, and only add tuples that posses the max move score to best_moves_list
         for entry in move_list:
             if entry[1] == best_move_score:
                 best_moves_list.append(entry)
 
+        # If there are multiple moves that yield max move score, randomly choose between one of them
         if len(best_moves_list) > 1:
             entry = random.choice(best_moves_list)
             best_worker = entry[0]
             best_move_dir = entry[2]
             best_build_dir = entry[3]
-            self._height_score = entry[4]
-            self._center_score = entry[5]
-            self._distance_score = entry[6]
+            height_score = entry[4]
+            center_score = entry[5]
+            distance_score = entry[6]
         elif len(best_moves_list) == 1:
             best_worker = best_moves_list[0][0]
             best_move_dir = best_moves_list[0][2]
             best_build_dir = best_moves_list[0][3]
-            self._height_score = best_moves_list[0][4]
-            self._center_score = best_moves_list[0][5]
-            self._distance_score = best_moves_list[0][6]
+            height_score = best_moves_list[0][4]
+            center_score = best_moves_list[0][5]
+            distance_score = best_moves_list[0][6]
 
-        return [best_worker, best_move_dir, best_build_dir, self._height_score, self._center_score, self._distance_score]
+        return [best_worker, best_move_dir, best_build_dir, height_score, center_score, distance_score]
 
-    def _calculate_height_score(self, worker, move_x, move_y, build_x, build_y):
+    def _calculate_height_score(self, worker, move_x, move_y):
         workers = self._player.get_workers()
 
         if worker == workers[0]:
@@ -181,13 +209,8 @@ class HeuristicTurn(TurnTemplate):
         cell2 = self._board.get_specific_cell(other_worker.x, other_worker.y)
         cell1_pos = cell1.get_position()
         cell2_pos = cell2.get_position()
-
-        if cell1_pos[0] == build_x and cell1_pos[1] == build_y:
-            return (cell1.get_height() + 1) + cell2.get_height()
-        elif cell2_pos[0] == build_x and cell2_pos[1] == build_y:
-            return cell1.get_height() + (cell2.get_height() + 1)
-        else:
-            return cell1.get_height() + cell2.get_height()
+        
+        return cell1.get_height() + cell2.get_height()
 
     def _calculate_center_score(self, worker, move_x, move_y):
         workers = self._player.get_workers()
