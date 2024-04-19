@@ -16,7 +16,7 @@ class Cell:
     
     def get_position(self):
         '''Returns the (x, y) coordinate position of the cell'''
-        return f'{self._x}, {self._y}'
+        return [self._x, self._y]
     
     def is_occupied(self):
         '''Returns True if the cell has a worker occupying it'''

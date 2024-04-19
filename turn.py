@@ -83,49 +83,60 @@ class HeuristicTurn:
         self._player = player
         self._game = santorini_ref
         self._c1, self._c2, self._c3 = 3, 2, 1
-        self._max_height_score = -1
-        self._max_center_score = -1
-        self._max_distance_score = -1
-    
+        self._height_score = -1
+        self._center_score = -1
+        self._distance_score = -1
+
     def run(self):
         workers = self._player.get_workers()
 
-        best_worker = None
-        best_move_dir = None
-        best_build_dir = None
-        best_move_score = -1
-        best_move_dict = {}
+        move_scores = []
+        move_list = []
+        best_moves_list = []
 
         for worker in workers:
             worker_moves = worker.enumerate_moves(self._board)
             for move_dir in worker_moves.keys():
-                move_x = worker.x + DIRECTION[move_dir]['x']
-                move_y = worker.y + DIRECTION[move_dir]['y']
+                for build_dir in worker_moves[move_dir]:
+                    move_x = worker.x + DIRECTION[move_dir]['x']
+                    move_y = worker.y + DIRECTION[move_dir]['y']
+                    build_x = move_x + DIRECTION[build_dir]['x']
+                    build_y = move_y + DIRECTION[build_dir]['y']
 
-                height_score = self._calculate_height_score(worker, move_x, move_y)
-                center_score = self._calculate_center_score(worker, move_x, move_y)
-                distance_score = self._calculate_distance_score(worker, move_x, move_y)
-                move_score = self._calculate_move_score(height_score, center_score, distance_score)
+                    # ! check if height is 3 first
 
-                if height_score >= self._max_height_score \
-                and center_score >= self._max_center_score \
-                and distance_score >= self._max_distance_score:
-                    self._max_height_score = height_score
-                    self._max_center_score = center_score
-                    self._max_distance_score = distance_score
-                    best_move_dir = move_dir
-                    best_move_score = move_score
-            best_move_dict[worker] = [worker.name, best_move_dir, best_move_score, self._max_height_score, self._max_center_score, self._max_distance_score]
+                    height_score = self._calculate_height_score(worker, move_x, move_y, build_x, build_y)
+                    center_score = self._calculate_center_score(worker, move_x, move_y)
+                    distance_score = self._calculate_distance_score(worker, move_x, move_y)
+                    move_score = self._calculate_move_score(height_score, center_score, distance_score)
+                    move_scores.append(move_score)
+                    move_list.append((worker, move_score, move_dir, build_dir, height_score, center_score, distance_score))
         
-        # obj1: ['A', 'ne', 12, 0, 3, 6], obj2: ['B', 'sw', 12, 0, 3, 6]}
-        # key: best move dir, move score, height, center, distance
-        print(best_move_dict)
-        if list(best_move_dict.values())[0][2] == list(best_move_dict.values())[1][2]:
-            best_worker = random.choice(list(best_move_dict.keys()))
-        
-        print(best_worker.name)
+        best_move_score = max(move_scores)
 
-    def _calculate_height_score(self, worker, move_x, move_y):
+        for entry in move_list:
+            if entry[1] == best_move_score:
+                best_moves_list.append(entry)
+
+        if len(best_moves_list) > 1:
+            entry = random.choice(best_moves_list)
+            best_worker = entry[0]
+            best_move_dir = entry[2]
+            best_build_dir = entry[3]
+            self._height_score = entry[4]
+            self._center_score = entry[5]
+            self._distance_score = entry[6]
+        elif len(best_moves_list) == 1:
+            best_worker = best_moves_list[0][0]
+            best_move_dir = best_moves_list[0][2]
+            best_build_dir = best_moves_list[0][3]
+            self._height_score = best_moves_list[0][4]
+            self._center_score = best_moves_list[0][5]
+            self._distance_score = best_moves_list[0][6]
+
+        print(f"{best_worker.name}, {best_move_dir}, {best_build_dir} ({self._height_score}, {self._center_score}, {self._distance_score})")
+
+    def _calculate_height_score(self, worker, move_x, move_y, build_x, build_y):
         workers = self._player.get_workers()
 
         if worker == workers[0]:
@@ -135,7 +146,15 @@ class HeuristicTurn:
 
         cell1 = self._board.get_specific_cell(move_x, move_y)
         cell2 = self._board.get_specific_cell(other_worker.x, other_worker.y)
-        return cell1.get_height() + cell2.get_height()
+        cell1_pos = cell1.get_position()
+        cell2_pos = cell2.get_position()
+
+        if cell1_pos[0] == build_x and cell1_pos[1] == build_y:
+            return (cell1.get_height() + 1) + cell2.get_height()
+        elif cell2_pos[0] == build_x and cell2_pos[1] == build_y:
+            return cell1.get_height() + (cell2.get_height() + 1)
+        else:
+            return cell1.get_height() + cell2.get_height()
 
     def _calculate_center_score(self, worker, move_x, move_y):
         workers = self._player.get_workers()
