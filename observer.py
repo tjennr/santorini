@@ -32,6 +32,9 @@ class EndGameObserver(Observer):
                 self._restart = True
             elif restart == "no":
                 exit(0)
+            else:
+                # TODO
+                pass
     
     def restart(self):
         return self._restart

@@ -63,12 +63,23 @@ class HumanTurn(TurnTemplate):
 class RandomTurn(TurnTemplate):
     def run(self):
         worker = random.choice(self._player.get_workers())
-        
+
         worker_moves = worker.enumerate_moves(self._board)
 
         # ! crashes after a few reruns?
+        if worker_moves == {}:
+            workers = self._player.get_workers()
+            if worker == workers[0]:
+                worker = workers[1]
+            else:
+                worker = workers[0]
+            worker_moves = worker.enumerate_moves(self._board)
+            if worker_moves == {}:
+                # end game
+                exit(1)
+
         move_dir = random.choice(list(worker_moves.keys()))
-        
+
         build_dir = random.choice(worker_moves[move_dir])
         
         # ? assuming no errors ?

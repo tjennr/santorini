@@ -7,8 +7,8 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Set default values
-    playerWhite = 'heuristic'
-    playerBlue = 'heuristic'
+    playerWhite = 'random'
+    playerBlue = 'random'
     memento = False
     score = False
 
