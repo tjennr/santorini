@@ -6,7 +6,7 @@ from cli import SantoriniCLI
 
 class GameManager(Subject):
     '''Manages and modifies the game state. Also keeps track of the game state history'''
-    def __init__(self, playerWhite_type='heuristic', playerBlue_type='heuristic', memento=False, score_display=True):
+    def __init__(self, playerWhite_type='human', playerBlue_type='human', memento=False, score_display=False):
         super().__init__()
         self._cli = SantoriniCLI(self)
         self._game_observer = EndGameObserver()
