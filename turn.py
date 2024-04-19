@@ -66,7 +66,6 @@ class RandomTurn(TurnTemplate):
 
         worker_moves = worker.enumerate_moves(self._board)
 
-        # ! crashes after a few reruns?
         if worker_moves == {}:
             workers = self._player.get_workers()
             if worker == workers[0]:
@@ -75,7 +74,7 @@ class RandomTurn(TurnTemplate):
                 worker = workers[0]
             worker_moves = worker.enumerate_moves(self._board)
             if worker_moves == {}:
-                # end game
+                # TODO: end game
                 exit(1)
 
         move_dir = random.choice(list(worker_moves.keys()))
@@ -94,9 +93,7 @@ class HeuristicTurn:
         self._player = player
         self._game = santorini_ref
         self._c1, self._c2, self._c3 = 3, 2, 1
-        self._height_score = -1
-        self._center_score = -1
-        self._distance_score = -1
+        self._best_move_data = []
 
     def run(self):
         workers = self._player.get_workers()
@@ -145,7 +142,9 @@ class HeuristicTurn:
             self._center_score = best_moves_list[0][5]
             self._distance_score = best_moves_list[0][6]
 
-        print(f"{best_worker.name}, {best_move_dir}, {best_build_dir} ({self._height_score}, {self._center_score}, {self._distance_score})")
+        self._best_move_data = [best_worker.name, best_move_dir, best_build_dir, self._height_score, self._center_score, self._distance_score]
+        
+        print(self._best_move_data)
 
     def _calculate_height_score(self, worker, move_x, move_y, build_x, build_y):
         workers = self._player.get_workers()
