@@ -6,7 +6,7 @@ from cli import SantoriniCLI
 
 class GameManager(Subject):
     '''Manages and modifies the game state. Also keeps track of the game state history'''
-    def __init__(self, playerWhite_type='heuristic', playerBlue_type='heuristic', memento=False, score_display=False):
+    def __init__(self, playerWhite_type='heuristic', playerBlue_type='heuristic', memento=False, score_display=True):
         super().__init__()
         self._cli = SantoriniCLI(self)
         self._game_observer = EndGameObserver()
@@ -122,7 +122,55 @@ class GameManager(Subject):
     def execute_command(self, command):
         """Execute a command."""
         command.execute()
+    
+    def calculate_curr_height_score(self, player):
+        workers = player.get_workers()
+        cell1 = self._game.get_board().get_specific_cell(workers[0].x, workers[0].y)
+        cell2 = self._game.get_board().get_specific_cell(workers[1].x, workers[1].y)
 
+        return cell1.get_height() + cell2.get_height()
+    
+    def calculate_curr_center_score(self, player):
+        workers = player.get_workers()
+
+        return workers[0].get_ring_level(workers[0].x, workers[0].y) \
+        + workers[1].get_ring_level(workers[1].x, workers[1].y)
+    
+    def calculate_curr_distance(self, worker1, worker2):
+        return max(abs(worker2.y - worker1.y), abs(worker2.x - worker1.x))
+
+    def calculate_curr_distance_score(self, player):
+        players = self.get_both_players()
+        
+        for player in players:
+            if player.color == 'White':
+                pWhite = player
+            elif player.color == 'Blue':
+                pBlue = player
+        
+        white_workers = pWhite.get_workers()
+        worker_A = white_workers[0]
+        worker_B = white_workers[1]
+
+        blue_workers = pBlue.get_workers()
+        worker_Y = blue_workers[0]
+        worker_Z = blue_workers[1]
+
+        distance_AZ = self.calculate_curr_distance(worker_A, worker_Z)
+        distance_BY = self.calculate_curr_distance(worker_B, worker_Y)
+
+        distance_AY = self.calculate_curr_distance(worker_A, worker_Y)
+        distance_BZ = self.calculate_curr_distance(worker_B, worker_Z)
+        if player == pWhite:
+            return 8 - (min(distance_BY, distance_AY) + min(distance_BZ, distance_AZ))
+        elif player == pBlue:
+            return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
+        
+    def get_curr_move_data(self, player):
+        height_score = self.calculate_curr_height_score(player)
+        center_score = self.calculate_curr_center_score(player)
+        distance_score = self.calculate_curr_distance_score(player)
+        return [height_score, center_score, distance_score]
 
 class GameState:
     '''Stores a state of a game including the board, players, turn count, and score display'''
@@ -131,6 +179,7 @@ class GameState:
         self._playerWhite = PlayerWhite(self._board, playerWhite_type, manager)
         self._playerBlue = PlayerBlue(self._board, playerBlue_type, manager)
         self._turn_count = 1
+        self._curr_move_data = []
         self._score_display = score_display
 
     def get_board(self):
@@ -156,6 +205,9 @@ class GameState:
     def get_scoredisplay(self):
         '''Returns True if the game is displaying the score'''
         return self._score_display
+    
+    def get_curr_move_data(self):
+        return self._curr_move_data
     
     def increment_turn_count(self):
         '''Increments the game's turn count'''
