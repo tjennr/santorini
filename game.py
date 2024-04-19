@@ -38,7 +38,6 @@ class GameManager(Subject):
             self._cli.display_winner(winner)
             self.notify("end")
 
-        # TODO
         if self._game_observer.restart():
             GameManager(self._game.get_white().type, self._game.get_blue().type, self._game.get_memento(), self._game.get_scoredisplay()).run()
     

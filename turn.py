@@ -1,6 +1,7 @@
 import random
 from player import DIRECTION
 
+
 class TurnTemplate:
     def __init__(self, board, player, manager):
         self._board = board
@@ -60,6 +61,7 @@ class HumanTurn(TurnTemplate):
 
         print(f"{worker.name},{move_dir},{build_dir}")
 
+
 class RandomTurn(TurnTemplate):
     def run(self):
         worker = random.choice(self._player.get_workers())
@@ -74,8 +76,8 @@ class RandomTurn(TurnTemplate):
                 worker = workers[0]
             worker_moves = worker.enumerate_moves(self._board)
             if worker_moves == {}:
-                # TODO: end game
-                exit(1)
+                self._manager.notify("end")
+                return
 
         move_dir = random.choice(list(worker_moves.keys()))
 
@@ -87,22 +89,16 @@ class RandomTurn(TurnTemplate):
 
         print(f"{worker.name},{move_dir},{build_dir}")
 
-class HeuristicTurn(TurnTemplate):
-    def __init__(self, board, player, manager):
-        super().__init__(board, player, manager)
-        self._c1 = 3
-        self._c2 = 2
-        self._c3 = 1
-        self._best_move_data = []
 
+class HeuristicTurn(TurnTemplate):
     def run(self):
-        self._best_move_data = self.get_best_move_data()
-        worker = self._best_move_data[0]
-        move_dir = self._best_move_data[1]
-        build_dir = self._best_move_data[2]
-        height_score = self._best_move_data[3]
-        center_score = self._best_move_data[4]
-        distance_score = self._best_move_data[5]
+        best_move_data = self.get_best_move_data()
+        worker = best_move_data[0]
+        move_dir = best_move_data[1]
+        build_dir = best_move_data[2]
+        height_score = best_move_data[3]
+        center_score = best_move_data[4]
+        distance_score = best_move_data[5]
 
         self._player.move(worker, move_dir)
         self._player.build(worker, build_dir)
@@ -244,9 +240,7 @@ class HeuristicTurn(TurnTemplate):
             return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
     
     def _calculate_move_score(self, height_score, center_score, distance_score):
-        return self._c1 * height_score \
-            + self._c2 * center_score \
-            + self._c3 * distance_score
-    
-    def _calculate_curr_stats(self):
-        pass
+        c1, c2, c3 = 3, 2, 1
+        return c1 * height_score \
+            + c2 * center_score \
+            + c3 * distance_score

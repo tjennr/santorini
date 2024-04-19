@@ -2,15 +2,15 @@ import sys
 from game import GameManager
 
 if __name__ == '__main__':
-    if len(sys.argv) < 1 or len(sys.argv) > 4:
+    if len(sys.argv) < 1 or len(sys.argv) > 5:
         print("Usage: python main.py argv1 [argv2] [argv3] [argv4]")
         sys.exit(1)
 
     # Set default values
     playerWhite = 'human'
     playerBlue = 'human'
-    memento = True
-    score = True
+    memento = False
+    score_display = False
 
     # Parse command-line arguments
     if len(sys.argv) >= 2:
@@ -30,4 +30,4 @@ if __name__ == '__main__':
             score = True
 
     # Run the game
-    GameManager(playerWhite, playerBlue, memento, score).run()
+    GameManager(playerWhite, playerBlue, memento, score_display).run()

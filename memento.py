@@ -74,14 +74,12 @@ class CareTaker:
     def history_isempty(self):
         '''Returns True if history list is empty'''
         if not len(self._history):
-            print("No mementos")
             return True
         return False
         
     def undone_isempty(self):
         '''Returns True if undone list is empty'''
         if not len(self._undone):
-            print("No mementos")
             return True
         return False
 
