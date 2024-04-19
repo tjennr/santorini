@@ -11,7 +11,7 @@ class GameManager(Subject):
         self._cli = SantoriniCLI(self)
         self._game_observer = EndGameObserver()
         self.attach(self._game_observer)
-        self._game = GameState(playerWhite_type, playerBlue_type, score_display, self)
+        self._game = GameState(playerWhite_type, playerBlue_type, memento, score_display, self)
         self._memento = memento
         if memento:
             self._originator = Originator(self)
@@ -38,9 +38,9 @@ class GameManager(Subject):
             self._cli.display_winner(winner)
             self.notify("end")
 
+        # TODO
         if self._game_observer.restart():
-            # TODO: restart game with same settings, dont reset to default settings
-            GameManager().run()
+            GameManager(self._game.get_white().type, self._game.get_blue().type, self._game.get_memento(), self._game.get_scoredisplay()).run()
     
     def get_both_players(self):
         '''Returns both players'''
@@ -174,12 +174,13 @@ class GameManager(Subject):
 
 class GameState:
     '''Stores a state of a game including the board, players, turn count, and score display'''
-    def __init__(self, playerWhite_type, playerBlue_type, score_display, manager):
+    def __init__(self, playerWhite_type, playerBlue_type, memento, score_display, manager):
         self._board = Board()
         self._playerWhite = PlayerWhite(self._board, playerWhite_type, manager)
         self._playerBlue = PlayerBlue(self._board, playerBlue_type, manager)
         self._turn_count = 1
         self._curr_move_data = []
+        self._memento = memento
         self._score_display = score_display
 
     def get_board(self):
@@ -202,6 +203,9 @@ class GameState:
         '''Returns turn count'''
         return self._turn_count
     
+    def get_memento(self):
+        return self._memento
+
     def get_scoredisplay(self):
         '''Returns True if the game is displaying the score'''
         return self._score_display

@@ -7,9 +7,9 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Set default values
-    playerWhite = 'heuristic'
-    playerBlue = 'heuristic'
-    memento = False
+    playerWhite = 'human'
+    playerBlue = 'human'
+    memento = True
     score = True
 
     # Parse command-line arguments
