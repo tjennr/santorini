@@ -224,3 +224,6 @@ class HeuristicTurn:
         return self._c1 * height_score \
             + self._c2 * center_score \
             + self._c3 * distance_score
+    
+    def _calculate_curr_stats(self):
+        pass
