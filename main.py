@@ -10,7 +10,7 @@ if __name__ == '__main__':
     playerWhite = 'heuristic'
     playerBlue = 'heuristic'
     memento = False
-    score = False
+    score = True
 
     # Parse command-line arguments
     if len(sys.argv) >= 2:

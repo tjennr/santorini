@@ -6,7 +6,7 @@ from cli import SantoriniCLI
 
 class GameManager(Subject):
     '''Manages and modifies the game state. Also keeps track of the game state history'''
-    def __init__(self, playerWhite_type='random', playerBlue_type='random', memento=False, score_display=False):
+    def __init__(self, playerWhite_type='heuristic', playerBlue_type='heuristic', memento=False, score_display=False):
         super().__init__()
         self._cli = SantoriniCLI(self)
         self._game_observer = EndGameObserver()
@@ -39,6 +39,7 @@ class GameManager(Subject):
             self.notify("end")
 
         if self._game_observer.restart():
+            # TODO: restart game with same settings, dont reset to default settings
             GameManager().run()
     
     def get_both_players(self):
@@ -131,6 +132,7 @@ class GameState:
         self._playerBlue = PlayerBlue(self._board, playerBlue_type, manager)
         self._turn_count = 1
         self._score_display = score_display
+        self._best_move_data = []
 
     def get_board(self):
         '''Returns the board'''
@@ -155,6 +157,9 @@ class GameState:
     def get_scoredisplay(self):
         '''Returns True if the game is displaying the score'''
         return self._score_display
+    
+    def get_heuristic_move_data(self):
+        return self._best_move_data
     
     def increment_turn_count(self):
         '''Increments the game's turn count'''

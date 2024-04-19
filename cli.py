@@ -29,13 +29,12 @@ class SantoriniCLI:
                 RandomTurn(self._manager.get_board(), player, self._manager).run()
             elif player.type == 'heuristic':
                 HeuristicTurn(self._manager.get_board(), player, self._manager).run()
-                break
 
             self._manager.increment_turn_count()
 
     def display_turn_info(self, player):
         '''Displays the player information at this round'''
-        if player.type == 'heuristic' and self._manager.get_scoredisplay == True:
+        if self._manager.get_scoredisplay == True:
             print(f"Turn: {self._manager.get_turncount()}, {player.color} ({player.workers}), ({0}, {0}, {0})")
         else:
             print(f"Turn: {self._manager.get_turncount()}, {player.color} ({player.workers})")

@@ -87,15 +87,29 @@ class RandomTurn(TurnTemplate):
 
         print(f"{worker.name},{move_dir},{build_dir}")
 
-class HeuristicTurn:
-    def __init__(self, board, player, santorini_ref):
-        self._board = board
-        self._player = player
-        self._game = santorini_ref
-        self._c1, self._c2, self._c3 = 3, 2, 1
+class HeuristicTurn(TurnTemplate):
+    def __init__(self, board, player, manager):
+        super().__init__(board, player, manager)
+        self._c1 = 3
+        self._c2 = 2
+        self._c3 = 1
         self._best_move_data = []
 
     def run(self):
+        self._best_move_data = self.get_best_move_data()
+        worker = self._best_move_data[0]
+        move_dir = self._best_move_data[1]
+        build_dir = self._best_move_data[2]
+        height_score = self._best_move_data[3]
+        center_score = self._best_move_data[4]
+        distance_score = self._best_move_data[5]
+
+        self._player.move(worker, move_dir)
+        self._player.build(worker, build_dir)
+
+        print(f"{worker.name},{move_dir},{build_dir} ({height_score}, {center_score}, {distance_score})")
+
+    def get_best_move_data(self):
         workers = self._player.get_workers()
 
         move_scores = []
@@ -112,6 +126,9 @@ class HeuristicTurn:
                     build_y = move_y + DIRECTION[build_dir]['y']
 
                     # ! check if height is 3 first
+                    move_to_cell = self._board.get_specific_cell(move_x, move_y)
+                    if move_to_cell.get_height == 3:
+                        return [worker, move_dir, build_dir, self._height_score, self._center_score, self._distance_score]
 
                     height_score = self._calculate_height_score(worker, move_x, move_y, build_x, build_y)
                     center_score = self._calculate_center_score(worker, move_x, move_y)
@@ -142,9 +159,7 @@ class HeuristicTurn:
             self._center_score = best_moves_list[0][5]
             self._distance_score = best_moves_list[0][6]
 
-        self._best_move_data = [best_worker.name, best_move_dir, best_build_dir, self._height_score, self._center_score, self._distance_score]
-        
-        print(self._best_move_data)
+        return [best_worker, best_move_dir, best_build_dir, self._height_score, self._center_score, self._distance_score]
 
     def _calculate_height_score(self, worker, move_x, move_y, build_x, build_y):
         workers = self._player.get_workers()
@@ -177,11 +192,10 @@ class HeuristicTurn:
         return worker.get_ring_level(move_x, move_y) + other_worker.get_ring_level(other_worker.x, other_worker.y)
 
     def _calculate_distance(self, worker1, worker2):
-        # chebyshev distance formula
         return max(abs(worker2[1] - worker1[1]), abs(worker2[0] - worker1[0]))
 
     def _calculate_distance_score(self, worker, move_x, move_y):
-        players = self._game.get_both_players()
+        players = self._manager.get_both_players()
         
         for player in players:
             if player.color == 'White':
