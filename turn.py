@@ -198,6 +198,7 @@ class HeuristicTurn(TurnTemplate):
         return [best_worker, best_move_dir, best_build_dir, height_score, center_score, distance_score]
 
     def _calculate_height_score(self, worker, move_x, move_y):
+        '''Calculates height score after given worker is moved'''
         workers = self._player.get_workers()
 
         if worker == workers[0]:
@@ -205,14 +206,16 @@ class HeuristicTurn(TurnTemplate):
         else:
             other_worker = workers[0]
 
+        # Get cell that worker would move to
         cell1 = self._board.get_specific_cell(move_x, move_y)
+
+        # Get cell that other worker currently stands on
         cell2 = self._board.get_specific_cell(other_worker.x, other_worker.y)
-        cell1_pos = cell1.get_position()
-        cell2_pos = cell2.get_position()
         
         return cell1.get_height() + cell2.get_height()
 
     def _calculate_center_score(self, worker, move_x, move_y):
+        '''Calculates center score after given worker is moved'''
         workers = self._player.get_workers()
 
         if worker == workers[0]:
@@ -223,25 +226,31 @@ class HeuristicTurn(TurnTemplate):
         return worker.get_ring_level(move_x, move_y) + other_worker.get_ring_level(other_worker.x, other_worker.y)
 
     def _calculate_distance(self, worker1, worker2):
+        '''Calculates distance based on two workers' positions'''
         return max(abs(worker2[1] - worker1[1]), abs(worker2[0] - worker1[0]))
 
     def _calculate_distance_score(self, worker, move_x, move_y):
+        '''Calculates distance score after given worker is moved'''
         players = self._manager.get_both_players()
         
+        # Get white and blue player
         for player in players:
             if player.color == 'White':
                 pWhite = player
             elif player.color == 'Blue':
                 pBlue = player
         
+        # Get workers associated with white player
         white_workers = pWhite.get_workers()
         worker_A = white_workers[0]
         worker_B = white_workers[1]
 
+        # Get workers associated with blue player
         blue_workers = pBlue.get_workers()
         worker_Y = blue_workers[0]
         worker_Z = blue_workers[1]
 
+        # Calculate distance based on if current worker being moved is A, B, Y, or Z
         if worker.name == worker_A.name:
             distance_AZ = self._calculate_distance((move_x, move_y), (worker_Z.x, worker_Z.y))
             distance_BY = self._calculate_distance((worker_B.x, worker_B.y), (worker_Y.x, worker_Y.y))
@@ -276,6 +285,7 @@ class HeuristicTurn(TurnTemplate):
             return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
     
     def _calculate_move_score(self, height_score, center_score, distance_score):
+        '''Calculates move score using given height, center, and distance score'''
         c1, c2, c3 = 3, 2, 1
         return c1 * height_score \
             + c2 * center_score \
