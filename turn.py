@@ -233,20 +233,13 @@ class HeuristicTurn(TurnTemplate):
         '''Calculates distance score after given worker is moved'''
         players = self._manager.get_both_players()
         
-        # Get white and blue player
-        for player in players:
-            if player.color == 'White':
-                pWhite = player
-            elif player.color == 'Blue':
-                pBlue = player
-        
         # Get workers associated with white player
-        white_workers = pWhite.get_workers()
+        white_workers = players[0].get_workers()
         worker_A = white_workers[0]
         worker_B = white_workers[1]
 
         # Get workers associated with blue player
-        blue_workers = pBlue.get_workers()
+        blue_workers = players[1].get_workers()
         worker_Y = blue_workers[0]
         worker_Z = blue_workers[1]
 

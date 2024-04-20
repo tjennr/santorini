@@ -144,17 +144,11 @@ class GameManager(Subject):
         '''Calculates current distance score using all workers' positions'''
         players = self.get_both_players()
         
-        for player in players:
-            if player.color == 'White':
-                pWhite = player
-            elif player.color == 'Blue':
-                pBlue = player
-        
-        white_workers = pWhite.get_workers()
+        white_workers = players[0].get_workers()
         worker_A = white_workers[0]
         worker_B = white_workers[1]
 
-        blue_workers = pBlue.get_workers()
+        blue_workers = players[1].get_workers()
         worker_Y = blue_workers[0]
         worker_Z = blue_workers[1]
 
@@ -163,9 +157,9 @@ class GameManager(Subject):
 
         distance_AY = self._calculate_curr_distance(worker_A, worker_Y)
         distance_BZ = self._calculate_curr_distance(worker_B, worker_Z)
-        if player == pWhite:
+        if player.color == 'white':
             return 8 - (min(distance_BY, distance_AY) + min(distance_BZ, distance_AZ))
-        elif player == pBlue:
+        elif player.color == 'blue':
             return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
         
     def create_curr_move_data(self, player):

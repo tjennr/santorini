@@ -35,7 +35,7 @@ class EndGameObserver(Observer):
         If the game state is end, it will prompt to play again and either set restart as True or exit game'''
         if game_state == "end":
             while True:
-                restart = input("Play again?\n")
+                restart = input("Play again?\n").lower()
                 if restart == "yes":
                     self._restart = True
                     break
@@ -46,7 +46,7 @@ class EndGameObserver(Observer):
     
     def reset_restart(self):
         self._restart = False
-        
+
     def restart(self):
         '''Returns True if restart is True'''
         return self._restart
