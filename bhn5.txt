@@ -1,6 +1,6 @@
 Although this pset was pretty difficult, I think it really helped solidify in my mind all the different 
 types of OOP mechanics I've learned throughout the semester. For most of the CS classes I've taken so far, 
-there's usually starter code given. However, having no starter code for this pset forced me too think hard
+there's usually starter code given. However, having no starter code for this pset forced me to think hard
 about how I can utilize OOP mechanics to split up this game into modularized sections. This is also the first time
 I have worked on a pset with a parter, and I think having a partner was actually very helpful, not only in the pure
 workload sense, but also in sharing ideas and brainstorming ways in which design patterns can be implemented in
