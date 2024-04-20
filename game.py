@@ -56,6 +56,7 @@ class GameManager(Subject):
                     # Save the current state in case user wants to redo
                     self._originator.change_state(self._game)
                     self._caretaker.do_redo()
+                    # Restore the undo game state
                     self._game = self._caretaker.undo()
                     return action
                 return 0
@@ -64,10 +65,12 @@ class GameManager(Subject):
                     # Save the current state in case user wants to undo again
                     self._originator.change_state(self._game)
                     self._caretaker.do()
+                    # Restore the redo game state
                     self._game = self._caretaker.redo()
                     return action
                 return 0
             elif action == 'next':
+                # Save the current state
                 self._originator.change_state(self._game)
                 self._caretaker.do()
                 self._caretaker.clear_undone()
@@ -89,9 +92,11 @@ class GameManager(Subject):
         '''Moves a given worker in a given direction if possible, else raises exception'''
         curr_cell = self._game.get_board().get_specific_cell(worker.x, worker.y)
         try: 
+            # Get new coordinates
             new_x = worker.x + DIRECTION[dir]['x']
             new_y = worker.y + DIRECTION[dir]['y']
             new_cell = self._game.get_board().get_specific_cell(new_x, new_y)
+            # Check if worker can move to new cell
             if new_cell.is_valid_move(curr_cell) and self._game.get_board().in_bounds(new_x, new_y):
                 curr_cell.remove()
                 new_cell.occupy(worker.name)
@@ -104,9 +109,11 @@ class GameManager(Subject):
     def build(self, worker, dir):
         '''Builds in a given direction if possible, else raises exception'''
         try:
+            # Get new coordinates
             new_x = worker.x + DIRECTION[dir]['x']
             new_y = worker.y + DIRECTION[dir]['y']
             new_cell = self._game.get_board().get_specific_cell(new_x, new_y)
+            # Check if worker can build at new cell
             if new_cell.is_valid_build() and self._game.get_board().in_bounds(new_x, new_y):
                 new_cell.build()
             else:
