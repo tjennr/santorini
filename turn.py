@@ -62,7 +62,11 @@ class HumanTurn(TurnTemplate):
                 print(f"Cannot build {build_dir}")
 
         # Print move data
-        print(f"{worker.name},{move_dir},{build_dir}")
+        data = self._manager.create_curr_move_data(self._player)
+        if self._manager.get_scoredisplay() == True:
+            print(f"{worker.name},{move_dir},{build_dir} ({data[0]}, {data[1]}, {data[2]})")
+        else:
+            print(f"{worker.name},{move_dir},{build_dir}")
 
 
 class RandomTurn(TurnTemplate):
@@ -100,7 +104,11 @@ class RandomTurn(TurnTemplate):
         self._player.build(worker, build_dir)
 
         # Print move stats
-        print(f"{worker.name},{move_dir},{build_dir}")
+        data = self._manager.create_curr_move_data(self._player)
+        if self._manager.get_scoredisplay() == True:
+            print(f"{worker.name},{move_dir},{build_dir} ({data[0]}, {data[1]}, {data[2]})")
+        else:
+            print(f"{worker.name},{move_dir},{build_dir}")
 
 
 class HeuristicTurn(TurnTemplate):

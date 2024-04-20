@@ -31,7 +31,7 @@ class GameManager(Subject):
     def check_game_end(self, player):
         '''Checks if the game has ended and notifies the observer which prompts for restart'''
         if self._game.get_board().win_condition_satisfied() or player.workers_cant_move():
-            if player.color == 'White':
+            if player.color == 'white':
                 winner = 'blue'
             else:
                 winner = 'white'
