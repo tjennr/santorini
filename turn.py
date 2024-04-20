@@ -20,10 +20,10 @@ class HumanTurn(TurnTemplate):
         while True:
             try:
                 worker = input("Select a worker to move\n")
-                if self._player.color == 'White' and (worker.upper() == 'Y' or worker.upper() == 'Z'):
+                if self._player.color == 'white' and (worker.upper() == 'Y' or worker.upper() == 'Z'):
                     print("That is not your worker")
                     continue
-                if self._player.color == 'Blue' and (worker.upper() == 'A' or worker.upper() == 'B'):
+                if self._player.color == 'blue' and (worker.upper() == 'A' or worker.upper() == 'B'):
                     print("That is not your worker")
                     continue
                 if not self._player.check_valid_worker(worker):
