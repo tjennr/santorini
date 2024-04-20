@@ -97,20 +97,25 @@ class Worker:
         '''Returns dict of available moves and builds'''
         available_move_and_builds = {}
         curr_cell = board.get_specific_cell(self.x, self.y)
+        # Iterate through every move direction 
         for move_dir in DIRECTION:
             move_x = self.x + DIRECTION[move_dir]['x']
             move_y = self.y + DIRECTION[move_dir]['y']
             if board.in_bounds(move_x, move_y):
+                # Get new coordinates once move is performed
                 new_cell = board.get_specific_cell(move_x, move_y)
                 if new_cell.is_valid_move(curr_cell):
                     available_builds = []
+                    # Iterate through every build direction after move has been performed
                     for build_dir in DIRECTION:
                         new_build_x = move_x + DIRECTION[build_dir]['x']
                         new_build_y = move_y + DIRECTION[build_dir]['y']
                         if board.in_bounds(new_build_x, new_build_y):
                             new_build_cell = board.get_specific_cell(new_build_x, new_build_y)
                             if new_build_cell.is_valid_build(self.x, self.y):
+                                # Append all possible builds to a list
                                 available_builds.append(build_dir)
+                        # Append all possible builds to the move direction key
                         available_move_and_builds[move_dir] = available_builds
         return available_move_and_builds
     
