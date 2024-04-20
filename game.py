@@ -122,7 +122,7 @@ class GameManager(Subject):
         """Execute a command."""
         command.execute()
     
-    def calculate_curr_height_score(self, player):
+    def _calculate_curr_height_score(self, player):
         '''Calculates current height score usign workers' current position'''
         workers = player.get_workers()
         cell1 = self._game.get_board().get_specific_cell(workers[0].x, workers[0].y)
@@ -130,7 +130,7 @@ class GameManager(Subject):
 
         return cell1.get_height() + cell2.get_height()
     
-    def calculate_curr_center_score(self, player):
+    def _calculate_curr_center_score(self, player):
         '''Calculates current center score using workers' current position'''
         workers = player.get_workers()
 
@@ -140,7 +140,7 @@ class GameManager(Subject):
     def _calculate_curr_distance(self, worker1, worker2):
         return max(abs(worker2.y - worker1.y), abs(worker2.x - worker1.x))
 
-    def calculate_curr_distance_score(self, player):
+    def _calculate_curr_distance_score(self, player):
         '''Calculates current distance score using all workers' positions'''
         players = self.get_both_players()
         
@@ -162,11 +162,11 @@ class GameManager(Subject):
         elif player.color == 'blue':
             return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
         
-    def create_curr_move_data(self, player):
+    def get_curr_move_data(self, player):
         '''Creates a tuple containing current height, center, distance score'''
-        height_score = self.calculate_curr_height_score(player)
-        center_score = self.calculate_curr_center_score(player)
-        distance_score = self.calculate_curr_distance_score(player)
+        height_score = self._calculate_curr_height_score(player)
+        center_score = self._calculate_curr_center_score(player)
+        distance_score = self._calculate_curr_distance_score(player)
         return [height_score, center_score, distance_score]
 
 class GameState:
@@ -176,7 +176,6 @@ class GameState:
         self._playerWhite = PlayerWhite(self._board, playerWhite_type, manager)
         self._playerBlue = PlayerBlue(self._board, playerBlue_type, manager)
         self._turn_count = 1
-        self._curr_move_data = []
         self._memento = memento
         self._score_display = score_display
 
@@ -207,10 +206,6 @@ class GameState:
     def get_scoredisplay(self):
         '''Returns True if the game is displaying the score'''
         return self._score_display
-    
-    def get_curr_move_data(self):
-        '''Returns current turn's move data'''
-        return self._curr_move_data
     
     def increment_turn_count(self):
         '''Increments the game's turn count'''
