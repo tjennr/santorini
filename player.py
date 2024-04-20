@@ -56,7 +56,7 @@ class Player:
 
 class PlayerWhite(Player):
     def __init__(self, board, player_type, manager):
-        self.color = 'White'
+        self.color = 'white'
         self._worker1 = Worker('A', 3, 1)
         self._worker2 = Worker('B', 1, 3)
         super().__init__(board, player_type, manager)
@@ -64,7 +64,7 @@ class PlayerWhite(Player):
 
 class PlayerBlue(Player):
     def __init__(self, board, player_type, manager):
-        self.color = 'Blue'
+        self.color = 'blue'
         self._worker1 = Worker('Y', 1, 1)
         self._worker2 = Worker('Z', 3, 3)
         super().__init__(board, player_type, manager)
