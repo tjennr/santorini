@@ -58,7 +58,7 @@ class GameManager(Subject):
                     self._caretaker.do_redo()
                     self._game = self._caretaker.undo()
                     return action
-                continue
+                return 0
             elif action == 'redo':
                 if not self._caretaker.undone_isempty():
                     # Save the current state in case user wants to undo again
@@ -66,7 +66,7 @@ class GameManager(Subject):
                     self._caretaker.do()
                     self._game = self._caretaker.redo()
                     return action
-                continue
+                return 0
             elif action == 'next':
                 self._originator.change_state(self._game)
                 self._caretaker.do()

@@ -19,7 +19,7 @@ class SantoriniCLI:
 
             # Prompt for memento's undo/redo (if applicable)
             action = self._manager.memento()
-            if action == 'redo' or action == 'undo':
+            if action == 'redo' or action == 'undo' or action == 0:
                 continue
             
             # Run corresponding player type's turn
