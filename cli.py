@@ -35,7 +35,7 @@ class SantoriniCLI:
     def display_turn_info(self, player):
         '''Displays the player information at this round'''
         if self._manager.get_scoredisplay() == True:
-            data = self._manager.get_curr_move_data(player)
+            data = self._manager.create_curr_move_data(player)
             print(f"Turn: {self._manager.get_turncount()}, {player.color} ({player.workers}), ({data[0]}, {data[1]}, {data[2]})")
         else:
             print(f"Turn: {self._manager.get_turncount()}, {player.color} ({player.workers})")

@@ -123,6 +123,7 @@ class GameManager(Subject):
         command.execute()
     
     def calculate_curr_height_score(self, player):
+        '''Calculates current height score usign workers' current position'''
         workers = player.get_workers()
         cell1 = self._game.get_board().get_specific_cell(workers[0].x, workers[0].y)
         cell2 = self._game.get_board().get_specific_cell(workers[1].x, workers[1].y)
@@ -130,15 +131,17 @@ class GameManager(Subject):
         return cell1.get_height() + cell2.get_height()
     
     def calculate_curr_center_score(self, player):
+        '''Calculates current center score using workers' current position'''
         workers = player.get_workers()
 
         return workers[0].get_ring_level(workers[0].x, workers[0].y) \
         + workers[1].get_ring_level(workers[1].x, workers[1].y)
     
-    def calculate_curr_distance(self, worker1, worker2):
+    def _calculate_curr_distance(self, worker1, worker2):
         return max(abs(worker2.y - worker1.y), abs(worker2.x - worker1.x))
 
     def calculate_curr_distance_score(self, player):
+        '''Calculates current distance score using all workers' positions'''
         players = self.get_both_players()
         
         for player in players:
@@ -155,17 +158,18 @@ class GameManager(Subject):
         worker_Y = blue_workers[0]
         worker_Z = blue_workers[1]
 
-        distance_AZ = self.calculate_curr_distance(worker_A, worker_Z)
-        distance_BY = self.calculate_curr_distance(worker_B, worker_Y)
+        distance_AZ = self._calculate_curr_distance(worker_A, worker_Z)
+        distance_BY = self._calculate_curr_distance(worker_B, worker_Y)
 
-        distance_AY = self.calculate_curr_distance(worker_A, worker_Y)
-        distance_BZ = self.calculate_curr_distance(worker_B, worker_Z)
+        distance_AY = self._calculate_curr_distance(worker_A, worker_Y)
+        distance_BZ = self._calculate_curr_distance(worker_B, worker_Z)
         if player == pWhite:
             return 8 - (min(distance_BY, distance_AY) + min(distance_BZ, distance_AZ))
         elif player == pBlue:
             return 8 - (min(distance_AZ, distance_AY) + min(distance_BY, distance_BZ))
         
-    def get_curr_move_data(self, player):
+    def create_curr_move_data(self, player):
+        '''Creates a tuple containing current height, center, distance score'''
         height_score = self.calculate_curr_height_score(player)
         center_score = self.calculate_curr_center_score(player)
         distance_score = self.calculate_curr_distance_score(player)
@@ -203,6 +207,7 @@ class GameState:
         return self._turn_count
     
     def get_memento(self):
+        '''Returns memento'''
         return self._memento
 
     def get_scoredisplay(self):
@@ -210,6 +215,7 @@ class GameState:
         return self._score_display
     
     def get_curr_move_data(self):
+        '''Returns current turn's move data'''
         return self._curr_move_data
     
     def increment_turn_count(self):
