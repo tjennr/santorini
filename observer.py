@@ -43,9 +43,6 @@ class EndGameObserver(Observer):
                     exit(0)
                 else:
                     continue
-    
-    def reset_restart(self):
-        self._restart = False
 
     def restart(self):
         '''Returns True if restart is True'''
