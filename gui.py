@@ -45,6 +45,7 @@ class SantoriniGUI(Subject):
         self._board_frame = tk.Frame(self._window)
         self._board_frame.grid(row=2, column=1, columnspan=8, sticky="ew")
         self._display_board()
+        self._bind_select()
 
         # Display next/undo/redo if enabled
         self._memento_frame = tk.Frame(self._window)
@@ -73,12 +74,14 @@ class SantoriniGUI(Subject):
                 winner = 'blue'
             else:
                 winner = 'white'
-            self._cli.display_winner(winner)
-            self.notify("end")
+            restart = tkinter.messagebox.askyesno(title=None, message=(f"{winner} has won!\nPlay again?"))
+            if restart:
+                self._window.destroy()
+                SantoriniGUI()
+            else:
+                self._window.destroy()  # Close the tkinter window
+                exit(0)
 
-        if self._game_observer.restart():
-            SantoriniGUI(self._game.get_white().type, self._game.get_blue().type, self._game.get_memento(), self._game.get_scoredisplay()).run()
-    
     def get_both_players(self):
         '''Returns both players'''
         return self._game.get_players()
@@ -124,8 +127,10 @@ class SantoriniGUI(Subject):
         self._player = self.alternate_player()
         self.check_game_end(self._player)
         self._display_board()
+        self._bind_select()
         self._display_turn_info()
 
+    # Displays board
     def _display_board(self):
         self.buttons = []  # To hold the references to buttons
         for row in range(5):
@@ -133,25 +138,43 @@ class SantoriniGUI(Subject):
             for col in range(5):
                 cell = self._game.get_board().get_specific_cell(row, col)
                 if cell.is_occupied():
-                    text = f"{cell.get_height()}\n{cell.get_occupying_worker()}"
+                    text = f"{cell.get_occupying_worker()}\n{cell.get_height()}"
                 else:
                     text = f"{cell.get_height()}"
                 button = tk.Button(self._board_frame, text=text, width=10, height=4)
                 button.grid(row=row, column=col)
-                button.bind("<Button-1>", lambda event, r=row, c=col: self._move(r, c))
                 row_buttons.append(button)
             self.buttons.append(row_buttons)
 
-    def _move(self, row, col):
-        # Verify that player can move this worker
+    # Binds select command to each button
+    def _bind_select(self):
+        for row in range(5):
+            for col in range(5):
+                self.buttons[row][col].bind("<Button-1>", lambda event, r=row, c=col: self._verify_valid_worker(r, c))
+
+    # Verifies that selected worker is valid before allowing true select
+    def _verify_valid_worker(self, row, col):
         cell = self._game.get_board().get_specific_cell(row, col)
-        worker = cell.get_occupying_worker()
-        if self._player.color == 'white' and (worker == 'Y' or worker == 'Z'):
+        workername = cell.get_occupying_worker()
+
+        if self._player.color == 'white' and (workername == 'Y' or workername == 'Z'):
             tkinter.messagebox.showwarning(title=None, message=("That is not your worker"))
-        elif self._player.color == 'blue' and (worker == 'A' or worker == 'B'):
+        elif self._player.color == 'blue' and (workername == 'A' or workername == 'B'):
             tkinter.messagebox.showwarning(title=None, message=("That is not your worker"))
-        elif not self._player.check_valid_worker(worker):
+        elif not self._player.check_valid_worker(workername):
             tkinter.messagebox.showwarning(title=None, message=("Not a valid worker"))
+        else:
+            worker = self._player.select_worker(workername)
+            if worker.no_moves_left(self._game.get_board()):
+                tkinter.messagebox.showwarning(title=None, message=("That worker cannot move"))
+                return
+            self._select_worker(row, col, workername)
+
+    def _select_worker(self, row, col, worker):        
+        cell = self._game.get_board().get_specific_cell(row, col)
+        worker = self._player.select_worker(worker)
+        
+        self._unbind_buttons()
 
         # Define adjacent cell positions
         adjacent_positions = [
@@ -162,15 +185,45 @@ class SantoriniGUI(Subject):
         for adj_row, adj_col in adjacent_positions:
             if self._game.get_board().in_bounds(adj_row, adj_col):
                 adj_cell = self._game.get_board().get_specific_cell(adj_row, adj_col)
-                if not adj_cell.is_occupied():
+                if adj_cell.is_valid_move(cell):
+                    self.buttons[adj_row][adj_col].bind("<Button-1>", lambda event, 
+                                                        new=adj_cell, old=cell, w=worker, r=adj_row, c=adj_col: self._move(r, c, old, new, w))
+                    self.buttons[adj_row][adj_col].config(bg="yellow")
+        # self._display_board()
+
+    def _move(self, row, col, old_cell, new_cell, worker):
+        old_cell.remove()
+        new_cell.occupy(worker.name)
+        worker.update_pos(row, col)
+        self._display_board()
+        self._unbind_buttons()
+        adjacent_positions = [
+            (row-1, col-1), (row-1, col), (row-1, col+1),
+            (row, col-1),                 (row, col+1),
+            (row+1, col-1), (row+1, col), (row+1, col+1)
+        ]
+        for adj_row, adj_col in adjacent_positions:
+            if self._game.get_board().in_bounds(adj_row, adj_col):
+                adj_cell = self._game.get_board().get_specific_cell(adj_row, adj_col)
+                if adj_cell.is_valid_build():
                     self.buttons[adj_row][adj_col].bind("<Button-1>", lambda event, cell=adj_cell: self._build(cell))
                     self.buttons[adj_row][adj_col].config(bg="yellow")
+        # self._display_board()
 
     def _build(self, cell):
         # This function is executed when the button is clicked
         if cell.is_valid_build():
             cell.build()
         self._next_round()
+    
+    def _unbind_buttons(self):
+        # Unbind all buttons
+        for row in range(5):
+            for col in range(5):
+                self.buttons[row][col].bind("<Button-1>", lambda event, r=row, c=col: self._cannotchoose())
+
+    def _cannotchoose(self):
+        tkinter.messagebox.showwarning(title=None, message=("You cannot select this space"))
 
     def _display_turn_info(self):
         '''Displays the player information at this round'''
